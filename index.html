@@ -302,7 +302,7 @@ h1, h2, h3 {
 
 .policy-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 22px;
 }
 
@@ -490,18 +490,19 @@ footer {
                 <h2>Hair Care &amp; Policies</h2>
                 <p>Please arrive prepared for the best possible install.</p>
             </div>
-            <div class="policy-grid">
+            <div class="policy-grid" id="policy-grid">
+                <!-- Populated from the policy_items table — edit/add/remove entries via admin.html -->
                 <div class="policy fade-in">
-                    <h3 data-content-key="policy_prep_title">Prep Tips</h3>
-                    <p data-content-key="policy_prep_body">Please arrive washed, blow-dried, and product-free unless otherwise discussed.</p>
+                    <h3>Prep Tips</h3>
+                    <p>Please arrive washed, blow-dried, and product-free unless otherwise discussed.</p>
                 </div>
                 <div class="policy fade-in">
-                    <h3 data-content-key="policy_aftercare_title">Aftercare</h3>
-                    <p data-content-key="policy_aftercare_body">Wrap hair nightly with satin and apply lightweight scalp oil to maintain freshness.</p>
+                    <h3>Aftercare</h3>
+                    <p>Wrap hair nightly with satin and apply lightweight scalp oil to maintain freshness.</p>
                 </div>
                 <div class="policy fade-in">
-                    <h3 data-content-key="policy_deposit_title">Deposit Policy</h3>
-                    <p data-content-key="policy_deposit_body">A non-refundable deposit is required to secure all appointments.</p>
+                    <h3>Deposit Policy</h3>
+                    <p>A non-refundable deposit is required to secure all appointments.</p>
                 </div>
             </div>
         </div>
@@ -626,16 +627,26 @@ footer {
         });
     </script>
 
-    <!-- ============ WIFE-MANAGED SITE TEXT (Supabase table) ============ -->
+    <!-- ============ WIFE-MANAGED POLICY LIST (Supabase table) ============ -->
     <script>
         (async () => {
-            const { data, error } = await supabaseClient.from('site_content').select('key, value');
-            if (error || !data) return;
+            const { data, error } = await supabaseClient
+                .from('policy_items')
+                .select('title, body')
+                .order('created_at', { ascending: true });
 
-            const contentByKey = Object.fromEntries(data.map(row => [row.key, row.value]));
-            document.querySelectorAll('[data-content-key]').forEach(el => {
-                const value = contentByKey[el.dataset.contentKey];
-                if (value) el.textContent = value;
+            if (error || !data || data.length === 0) return;
+
+            const grid = document.getElementById('policy-grid');
+            grid.innerHTML = '';
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'policy fade-in';
+                card.innerHTML = `<h3></h3><p></p>`;
+                card.querySelector('h3').textContent = item.title;
+                card.querySelector('p').textContent = item.body;
+                grid.appendChild(card);
+                fadeObserver.observe(card);
             });
         })();
     </script>
