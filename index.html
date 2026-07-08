@@ -167,6 +167,16 @@ h1, h2, h3 {
     font-size: 1rem;
 }
 
+.form-card select {
+    border-radius: 999px;
+    padding: 14px 24px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23111'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 14px;
+}
+
 .form-card textarea {
     min-height: 100px;
     resize: none;
@@ -324,6 +334,19 @@ footer {
     color: #c9b9ac;
 }
 
+/* ---------- Scroll fade-in ---------- */
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
@@ -393,14 +416,14 @@ footer {
     <!-- ============ LUXURY TRANSFORMATIONS (before / after) ============ -->
     <section>
         <div class="container">
-            <div class="section-title">
+            <div class="section-title fade-in">
                 <h2>Luxury Transformations</h2>
                 <p>Flawless installs with premium texture and natural beauty.</p>
             </div>
             <div class="before-after">
                 <!-- Replace images/before-1.svg and before-2.svg with real client photos -->
-                <img src="images/before-1.svg" alt="Braid transformation, before and after view">
-                <img src="images/before-2.svg" alt="Braid transformation, styled result">
+                <img class="fade-in" src="images/before-1.svg" alt="Braid transformation, before and after view">
+                <img class="fade-in" src="images/before-2.svg" alt="Braid transformation, styled result">
             </div>
         </div>
     </section>
@@ -408,12 +431,12 @@ footer {
     <!-- ============ CLIENT FAVORITES (gallery) ============ -->
     <section class="section-alt">
         <div class="container">
-            <div class="section-title">
+            <div class="section-title fade-in">
                 <h2>Client Favorites</h2>
                 <p>Photo-realistic braid artistry with editorial beauty energy.</p>
             </div>
             <div class="gallery">
-                <div class="card">
+                <div class="card fade-in">
                     <!-- Replace images/gallery-boho.svg with a real photo of this style -->
                     <img src="images/gallery-boho.svg" alt="Boho knotless braids">
                     <div class="card-content">
@@ -421,14 +444,14 @@ footer {
                         <p class="testimonial">"The neatest braids I've ever had. Everyone stopped me to ask who did my hair."</p>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card fade-in">
                     <img src="images/gallery-fulani.svg" alt="Luxury Fulani braids">
                     <div class="card-content">
                         <h3>Luxury Fulani</h3>
                         <p class="testimonial">"Soft, lightweight, and still looked fresh weeks later."</p>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card fade-in">
                     <img src="images/gallery-silkpress.svg" alt="Silk press braid style">
                     <div class="card-content">
                         <h3>Silk Press Braids</h3>
@@ -443,8 +466,8 @@ footer {
     <section>
         <div class="container stylist">
             <!-- Replace images/stylist.svg with a portrait of Nauja -->
-            <img src="images/stylist.svg" alt="Portrait of Nauja, professional braid stylist">
-            <div class="story">
+            <img class="fade-in" src="images/stylist.svg" alt="Portrait of Nauja, professional braid stylist">
+            <div class="story fade-in">
                 <h2>Meet The Stylist</h2>
                 <p>BraidsByNauja was created to deliver elevated braid artistry with premium quality standards and a comfortable client experience. Every install is designed with precision, scalp care, long-lasting wear, and confidence in mind.</p>
                 <p>From sleek knotless styles to soft boho finishes, each appointment is tailored to enhance natural beauty while protecting your hair. The goal is simple: flawless braids that feel as luxurious as they look.</p>
@@ -455,20 +478,20 @@ footer {
     <!-- ============ HAIR CARE & POLICIES ============ -->
     <section class="section-alt">
         <div class="container">
-            <div class="section-title">
+            <div class="section-title fade-in">
                 <h2>Hair Care &amp; Policies</h2>
                 <p>Please arrive prepared for the best possible install.</p>
             </div>
             <div class="policy-grid">
-                <div class="policy">
+                <div class="policy fade-in">
                     <h3>Prep Tips</h3>
                     <p>Please arrive washed, blow-dried, and product-free unless otherwise discussed.</p>
                 </div>
-                <div class="policy">
+                <div class="policy fade-in">
                     <h3>Aftercare</h3>
                     <p>Wrap hair nightly with satin and apply lightweight scalp oil to maintain freshness.</p>
                 </div>
-                <div class="policy">
+                <div class="policy fade-in">
                     <h3>Deposit Policy</h3>
                     <p>A non-refundable deposit is required to secure all appointments.</p>
                 </div>
@@ -479,26 +502,40 @@ footer {
     <!-- ============ INSTAGRAM ============ -->
     <section>
         <div class="container instagram">
-            <div class="section-title">
+            <div class="section-title fade-in">
                 <h2>Tag Your Braided Masterpiece Look</h2>
                 <p>Follow the latest transformations and luxury installs.</p>
             </div>
             <div class="ig-grid">
                 <!-- Replace images/ig-1.svg through ig-4.svg with real Instagram photos -->
-                <img src="images/ig-1.svg" alt="Braids with gold accents and beaded ends">
-                <img src="images/ig-2.svg" alt="Cornrow braids with copper and gold tones">
-                <img src="images/ig-3.svg" alt="Long textured braids with gradient styling">
-                <img src="images/ig-4.svg" alt="Honey-toned curly braids">
+                <img class="fade-in" src="images/ig-1.svg" alt="Braids with gold accents and beaded ends">
+                <img class="fade-in" src="images/ig-2.svg" alt="Cornrow braids with copper and gold tones">
+                <img class="fade-in" src="images/ig-3.svg" alt="Long textured braids with gradient styling">
+                <img class="fade-in" src="images/ig-4.svg" alt="Honey-toned curly braids">
             </div>
             <div class="cta-row" style="justify-content:center;">
-                <button class="btn primary">@braidsbynauja</button>
+                <a class="btn primary" href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener" style="text-decoration:none; display:inline-block;">@braidsbynauja</a>
             </div>
         </div>
     </section>
 
     <footer>
         <p>BraidsByNauja™ — Luxury Protective Styling Experience</p>
+        <p><a href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener" style="color: var(--gold); text-decoration: none;">@braidsbynauja</a></p>
     </footer>
+
+    <script>
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    </script>
 
 </body>
 </html>
