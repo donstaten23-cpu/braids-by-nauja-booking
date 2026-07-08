@@ -24,6 +24,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background: var(--black);
     color: var(--white);
@@ -78,18 +82,18 @@ h1, h2, h3 {
     z-index: 0;
 }
 
-.hero-grid {
+.hero-content {
     position: relative;
     z-index: 2;
-    display: grid;
-    grid-template-columns: 1.2fr .8fr;
-    gap: 40px;
-    align-items: center;
+    max-width: 700px;
 }
 
 .logo-mark {
-    width: 150px;
-    margin-bottom: 24px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 240px;
+    z-index: 3;
 }
 
 .hero h1 {
@@ -105,18 +109,27 @@ h1, h2, h3 {
 
 .cta-row {
     display: flex;
+    align-items: center;
     gap: 16px;
     margin-top: 32px;
     flex-wrap: wrap;
 }
 
+.disclaimer {
+    color: #d8d0cb;
+    font-size: .9rem;
+    font-style: italic;
+}
+
 .btn {
+    display: inline-block;
     padding: 16px 26px;
     border-radius: 999px;
     border: none;
     font-weight: 600;
     font-size: 1rem;
     font-family: inherit;
+    text-decoration: none;
     cursor: pointer;
     transition: .3s ease;
 }
@@ -130,12 +143,6 @@ h1, h2, h3 {
     filter: brightness(1.08);
 }
 
-.btn.secondary {
-    background: rgba(255, 255, 255, .08);
-    color: var(--white);
-    border: 1px solid rgba(255, 255, 255, .2);
-}
-
 /* ---------- Booking form card ---------- */
 
 .form-card {
@@ -145,12 +152,8 @@ h1, h2, h3 {
     padding: 28px;
     border: 1px solid rgba(255, 255, 255, .12);
     box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
-}
-
-.form-card h3 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: var(--white);
+    max-width: 550px;
+    margin: 0 auto;
 }
 
 .form-card input,
@@ -350,7 +353,6 @@ footer {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
-    .hero-grid,
     .stylist,
     .gallery,
     .policy-grid,
@@ -361,6 +363,12 @@ footer {
 
     .hero h1 {
         font-size: 3.2rem;
+    }
+
+    .logo-mark {
+        width: 130px;
+        top: 16px;
+        left: 16px;
     }
 
     .card img,
@@ -377,22 +385,29 @@ footer {
     <!-- ============ HERO ============ -->
     <section class="hero">
         <!-- Background photo behind the hero — swap by replacing images/hero.svg with a real photo -->
-        <img class="hero-bg-img" src="images/hero.svg" alt="Close-up of intricate braided hairstyle">
+        <img class="hero-bg-img" src="images/hero.svg" data-storage-path="hero.jpg" alt="Close-up of intricate braided hairstyle">
 
-        <div class="container hero-grid">
-            <div>
-                <!-- Real logo artwork — replace images/logo-white.png if the logo is updated -->
-                <img class="logo-mark" src="images/logo-white.png" alt="BraidsByNauja logo">
-                <h1>Braids That Speak Before You Do.</h1>
-                <p>Premium extensions. Protective styles. Looks that last. Luxury braid installs designed for confidence, beauty, and long-lasting wear.</p>
-                <div class="cta-row">
-                    <button class="btn primary">Book Appointment</button>
-                    <button class="btn secondary">Limited appointments available</button>
-                </div>
+        <!-- Real logo artwork — replace via admin.html, or images/logo-white.png as a fallback -->
+        <img class="logo-mark" src="images/logo-white.png" data-storage-path="logo.png" alt="BraidsByNauja logo">
+
+        <div class="container hero-content">
+            <h1>Braids That Speak Before You Do.</h1>
+            <p>Premium extensions. Protective styles. Looks that last. Luxury braid installs designed for confidence, beauty, and long-lasting wear.</p>
+            <div class="cta-row">
+                <a href="#booking" class="btn primary">Book Appointment</a>
+                <p class="disclaimer">Limited appointments available</p>
             </div>
+        </div>
+    </section>
 
-            <div class="form-card">
-                <h3>Request Appointment</h3>
+    <!-- ============ REQUEST APPOINTMENT ============ -->
+    <section id="booking" class="section-alt">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Request Appointment</h2>
+                <p>Tell us what you're dreaming up and we'll take it from there.</p>
+            </div>
+            <div class="form-card fade-in">
                 <form id="booking-form">
                     <select id="braid-type" aria-label="Braid type" required>
                         <option value="" disabled selected>Select Braid Type</option>
@@ -422,8 +437,8 @@ footer {
             </div>
             <div class="before-after">
                 <!-- Replace images/before-1.svg and before-2.svg with real client photos -->
-                <img class="fade-in" src="images/before-1.svg" alt="Braid transformation, before and after view">
-                <img class="fade-in" src="images/before-2.svg" alt="Braid transformation, styled result">
+                <img class="fade-in" src="images/before-1.svg" data-storage-path="before-1.jpg" alt="Braid transformation, before and after view">
+                <img class="fade-in" src="images/before-2.svg" data-storage-path="before-2.jpg" alt="Braid transformation, styled result">
             </div>
         </div>
     </section>
@@ -438,21 +453,21 @@ footer {
             <div class="gallery">
                 <div class="card fade-in">
                     <!-- Replace images/gallery-boho.svg with a real photo of this style -->
-                    <img src="images/gallery-boho.svg" alt="Boho knotless braids">
+                    <img src="images/gallery-boho.svg" data-storage-path="gallery-boho.jpg" alt="Boho knotless braids">
                     <div class="card-content">
                         <h3>Boho Knotless</h3>
                         <p class="testimonial">"The neatest braids I've ever had. Everyone stopped me to ask who did my hair."</p>
                     </div>
                 </div>
                 <div class="card fade-in">
-                    <img src="images/gallery-fulani.svg" alt="Luxury Fulani braids">
+                    <img src="images/gallery-fulani.svg" data-storage-path="gallery-fulani.jpg" alt="Luxury Fulani braids">
                     <div class="card-content">
                         <h3>Luxury Fulani</h3>
                         <p class="testimonial">"Soft, lightweight, and still looked fresh weeks later."</p>
                     </div>
                 </div>
                 <div class="card fade-in">
-                    <img src="images/gallery-silkpress.svg" alt="Silk press braid style">
+                    <img src="images/gallery-silkpress.svg" data-storage-path="gallery-silkpress.jpg" alt="Silk press braid style">
                     <div class="card-content">
                         <h3>Silk Press Braids</h3>
                         <p class="testimonial">"Luxury service from start to finish. The quality speaks for itself."</p>
@@ -466,7 +481,7 @@ footer {
     <section>
         <div class="container stylist">
             <!-- Replace images/stylist.svg with a portrait of Nauja -->
-            <img class="fade-in" src="images/stylist.svg" alt="Portrait of Nauja, professional braid stylist">
+            <img class="fade-in" src="images/stylist.svg" data-storage-path="stylist.jpg" alt="Portrait of Nauja, professional braid stylist">
             <div class="story fade-in">
                 <h2>Meet The Stylist</h2>
                 <p>BraidsByNauja was created to deliver elevated braid artistry with premium quality standards and a comfortable client experience. Every install is designed with precision, scalp care, long-lasting wear, and confidence in mind.</p>
@@ -508,10 +523,10 @@ footer {
             </div>
             <div class="ig-grid">
                 <!-- Replace images/ig-1.svg through ig-4.svg with real Instagram photos -->
-                <img class="fade-in" src="images/ig-1.svg" alt="Braids with gold accents and beaded ends">
-                <img class="fade-in" src="images/ig-2.svg" alt="Cornrow braids with copper and gold tones">
-                <img class="fade-in" src="images/ig-3.svg" alt="Long textured braids with gradient styling">
-                <img class="fade-in" src="images/ig-4.svg" alt="Honey-toned curly braids">
+                <img class="fade-in" src="images/ig-1.svg" data-storage-path="ig-1.jpg" alt="Braids with gold accents and beaded ends">
+                <img class="fade-in" src="images/ig-2.svg" data-storage-path="ig-2.jpg" alt="Cornrow braids with copper and gold tones">
+                <img class="fade-in" src="images/ig-3.svg" data-storage-path="ig-3.jpg" alt="Long textured braids with gradient styling">
+                <img class="fade-in" src="images/ig-4.svg" data-storage-path="ig-4.jpg" alt="Honey-toned curly braids">
             </div>
             <div class="cta-row" style="justify-content:center;">
                 <a class="btn primary" href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener" style="text-decoration:none; display:inline-block;">@braidsbynauja</a>
@@ -535,6 +550,18 @@ footer {
         }, { threshold: 0.15 });
 
         document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    </script>
+
+    <!-- ============ WIFE-MANAGED PHOTOS (Supabase Storage) ============ -->
+    <script>
+        const SITE_IMAGE_BASE = 'https://cessfiegclsjwszmhmqv.supabase.co/storage/v1/object/public/site-images/';
+
+        document.querySelectorAll('[data-storage-path]').forEach(img => {
+            const candidateUrl = SITE_IMAGE_BASE + img.dataset.storagePath;
+            const preload = new Image();
+            preload.onload = () => { img.src = candidateUrl; };
+            preload.src = candidateUrl;
+        });
     </script>
 
     <!-- ============ SUPABASE BOOKING SUBMISSION ============ -->
