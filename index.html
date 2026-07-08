@@ -175,6 +175,14 @@ h1, h2, h3 {
     margin: 0 auto;
 }
 
+.field-label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 6px;
+}
+
 .form-card input,
 .form-card select,
 .form-card textarea {
@@ -258,6 +266,7 @@ h1, h2, h3 {
     color: #e4d6c8;
     margin-top: 10px;
     font-size: .95rem;
+    font-weight: 700;
 }
 
 /* ---------- Before / after ---------- */
@@ -339,8 +348,9 @@ h1, h2, h3 {
 }
 
 .price-card .price-description {
-    color: #d8d0cb;
-    font-size: .9rem;
+    color: var(--white);
+    font-size: .95rem;
+    font-weight: 600;
 }
 
 /* ---------- Policies ---------- */
@@ -395,6 +405,35 @@ footer {
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, .1);
     color: #c9b9ac;
+}
+
+/* ---------- Back to top ---------- */
+
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), #f5dfb2);
+    color: #111;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    z-index: 50;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* ---------- Scroll fade-in ---------- */
@@ -524,26 +563,26 @@ footer {
             </div>
             <div class="gallery">
                 <div class="card fade-in">
-                    <!-- Replace images/gallery-boho.svg with a real photo of this style -->
-                    <img src="images/gallery-boho.svg" data-storage-path="gallery-boho.jpg" alt="Boho knotless braids">
                     <div class="card-content">
                         <h3>Boho Knotless</h3>
                         <p class="testimonial">"The neatest braids I've ever had. Everyone stopped me to ask who did my hair."</p>
                     </div>
+                    <!-- Replace images/gallery-boho.svg with a real photo of this style -->
+                    <img src="images/gallery-boho.svg" data-storage-path="gallery-boho.jpg" alt="Boho knotless braids">
                 </div>
                 <div class="card fade-in">
-                    <img src="images/gallery-fulani.svg" data-storage-path="gallery-fulani.jpg" alt="Luxury Fulani braids">
                     <div class="card-content">
                         <h3>Luxury Fulani</h3>
                         <p class="testimonial">"Soft, lightweight, and still looked fresh weeks later."</p>
                     </div>
+                    <img src="images/gallery-fulani.svg" data-storage-path="gallery-fulani.jpg" alt="Luxury Fulani braids">
                 </div>
                 <div class="card fade-in">
-                    <img src="images/gallery-silkpress.svg" data-storage-path="gallery-silkpress.jpg" alt="Silk press braid style">
                     <div class="card-content">
                         <h3>Silk Press Braids</h3>
                         <p class="testimonial">"Luxury service from start to finish. The quality speaks for itself."</p>
                     </div>
+                    <img src="images/gallery-silkpress.svg" data-storage-path="gallery-silkpress.jpg" alt="Silk press braid style">
                 </div>
             </div>
         </div>
@@ -587,6 +626,41 @@ footer {
         </div>
     </section>
 
+    <!-- ============ REQUEST APPOINTMENT ============ -->
+    <section id="booking" class="section-alt">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Request Appointment</h2>
+                <p>Tell us what you're dreaming up and we'll take it from there.</p>
+            </div>
+            <div class="form-card fade-in">
+                <form id="booking-form">
+                    <label class="field-label" for="braid-type">Braid Type</label>
+                    <select id="braid-type" required>
+                        <option value="" disabled selected>Select Braid Type</option>
+                        <option>Knotless Braids</option>
+                        <option>Boho Braids</option>
+                        <option>Fulani Braids</option>
+                        <option>Stitch Braids</option>
+                    </select>
+                    <label class="field-label" for="preferred-date">Preferred Date</label>
+                    <input id="preferred-date" type="date">
+                    <label class="field-label" for="preferred-time">Preferred Time</label>
+                    <input id="preferred-time" type="time">
+                    <label class="field-label" for="full-name">Full Name</label>
+                    <input id="full-name" type="text" placeholder="Full Name" required>
+                    <label class="field-label" for="email">Email Address</label>
+                    <input id="email" type="email" placeholder="Email Address" required>
+                    <label class="field-label" for="phone">Phone Number</label>
+                    <input id="phone" type="tel" placeholder="Phone Number">
+                    <label class="field-label" for="notes">Additional Notes</label>
+                    <textarea id="notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
+                    <button class="btn primary" style="width:100%;" type="submit">Request Appointment</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- ============ INSTAGRAM ============ -->
     <section>
         <div class="container instagram">
@@ -607,38 +681,22 @@ footer {
         </div>
     </section>
 
-    <!-- ============ REQUEST APPOINTMENT ============ -->
-    <section id="booking" class="section-alt">
-        <div class="container">
-            <div class="section-title fade-in">
-                <h2>Request Appointment</h2>
-                <p>Tell us what you're dreaming up and we'll take it from there.</p>
-            </div>
-            <div class="form-card fade-in">
-                <form id="booking-form">
-                    <select id="braid-type" aria-label="Braid type" required>
-                        <option value="" disabled selected>Select Braid Type</option>
-                        <option>Knotless Braids</option>
-                        <option>Boho Braids</option>
-                        <option>Fulani Braids</option>
-                        <option>Stitch Braids</option>
-                    </select>
-                    <input id="preferred-date" type="date" aria-label="Preferred date">
-                    <input id="preferred-time" type="time" aria-label="Preferred time">
-                    <input id="full-name" type="text" placeholder="Full Name" required>
-                    <input id="email" type="email" placeholder="Email Address" required>
-                    <input id="phone" type="tel" placeholder="Phone Number">
-                    <textarea id="notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
-                    <button class="btn primary" style="width:100%;" type="submit">Request Appointment</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
     <footer>
         <p>BraidsByNauja™ — Luxury Protective Styling Experience</p>
         <p><a href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener" style="color: var(--gold); text-decoration: none;">@braidsbynauja</a></p>
     </footer>
+
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">&uarr;</button>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 500);
+        });
+
+        document.getElementById('back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 
     <script>
         const fadeObserver = new IntersectionObserver((entries) => {
