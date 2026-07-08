@@ -8,7 +8,346 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="images/logo-white.png">
-    <link rel="stylesheet" href="style.css">
+    <style>
+:root {
+    --black: #0b0b0b;
+    --gold: #d6b37b;
+    --beige: #f2e7dc;
+    --white: #fffdfb;
+    --brown: #5c3a29;
+    --soft: #e7d6c8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.container {
+    width: min(1150px, 92%);
+    margin: auto;
+}
+
+section {
+    padding: 80px 0;
+}
+
+h1, h2, h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, .55), rgba(0, 0, 0, .75));
+    z-index: 1;
+}
+
+.hero-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.hero-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.logo-mark {
+    width: 150px;
+    margin-bottom: 24px;
+}
+
+.hero h1 {
+    font-size: 5rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.15rem;
+    max-width: 550px;
+    color: #f4ede8;
+}
+
+.cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 16px 26px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, var(--gold), #f5dfb2);
+    color: #111;
+}
+
+.btn.primary:hover {
+    filter: brightness(1.08);
+}
+
+.btn.secondary {
+    background: rgba(255, 255, 255, .08);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, .2);
+}
+
+/* ---------- Booking form card ---------- */
+
+.form-card {
+    background: rgba(255, 255, 255, .08);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
+}
+
+.form-card h3 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: var(--white);
+}
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    border: none;
+    background: var(--white);
+    color: #111;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.form-card textarea {
+    min-height: 100px;
+    resize: none;
+}
+
+/* ---------- Section titles ---------- */
+
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title h2 {
+    font-size: 3.2rem;
+    margin-bottom: 12px;
+    color: var(--white);
+}
+
+.section-title p {
+    color: #d8d0cb;
+}
+
+.section-alt {
+    background: #0f0f0f;
+}
+
+/* ---------- Gallery ---------- */
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.card {
+    background: #151515;
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+.card img {
+    height: 420px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-content h3 {
+    color: var(--white);
+    font-size: 1.2rem;
+}
+
+.testimonial {
+    color: #e4d6c8;
+    margin-top: 10px;
+    font-size: .95rem;
+}
+
+/* ---------- Before / after ---------- */
+
+.before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.before-after img {
+    border-radius: 28px;
+    height: 500px;
+    object-fit: cover;
+}
+
+/* ---------- Stylist ---------- */
+
+.stylist {
+    display: grid;
+    grid-template-columns: .8fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.stylist img {
+    border-radius: 32px;
+    height: 580px;
+}
+
+.story {
+    background: #121212;
+    border-radius: 28px;
+    padding: 40px;
+}
+
+.story h2 {
+    font-size: 3rem;
+    margin-bottom: 18px;
+    color: var(--white);
+}
+
+.story p {
+    color: var(--white);
+    margin-bottom: 16px;
+}
+
+/* ---------- Policies ---------- */
+
+.policy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.policy {
+    background: #161616;
+    padding: 30px;
+    border-radius: 26px;
+}
+
+.policy h3 {
+    font-size: 2rem;
+    margin-bottom: 14px;
+    color: var(--gold);
+}
+
+.policy p {
+    color: var(--white);
+}
+
+/* ---------- Instagram ---------- */
+
+.instagram {
+    text-align: center;
+}
+
+.ig-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 40px;
+}
+
+.ig-grid img {
+    height: 260px;
+    border-radius: 24px;
+    object-fit: cover;
+}
+
+/* ---------- Footer ---------- */
+
+footer {
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    color: #c9b9ac;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+    .hero-grid,
+    .stylist,
+    .gallery,
+    .policy-grid,
+    .ig-grid,
+    .before-after {
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+        font-size: 3.2rem;
+    }
+
+    .card img,
+    .before-after img,
+    .stylist img,
+    .ig-grid img {
+        height: auto;
+    }
+}
+    </style>
 </head>
 <body>
 
