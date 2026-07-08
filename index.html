@@ -6,7 +6,7 @@
     <title>BraidsByNauja™ | Luxury Braiding Experience</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Italianno&display=swap" rel="stylesheet">
     <link rel="icon" href="images/logo-white.png">
     <style>
 :root {
@@ -54,6 +54,34 @@ h1, h2, h3 {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
     line-height: 1;
+}
+
+/* ---------- Opener ---------- */
+
+.opener {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--black);
+}
+
+.opener-title {
+    font-family: 'Italianno', 'Brush Script MT', cursive;
+    font-weight: 400;
+    font-size: 11rem;
+    color: var(--white);
+    line-height: 1;
+}
+
+.opener-subtitle {
+    font-family: 'Italianno', 'Brush Script MT', cursive;
+    font-weight: 400;
+    font-size: 3.4rem;
+    color: var(--gold);
+    margin-top: 4px;
 }
 
 /* ---------- Hero ---------- */
@@ -105,7 +133,7 @@ h1, h2, h3 {
     display: block;
 }
 
-.hero h1 {
+.hero h2 {
     font-size: 5rem;
     margin-bottom: 20px;
 }
@@ -460,8 +488,16 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .hero h1 {
+    .hero h2 {
         font-size: 3.2rem;
+    }
+
+    .opener-title {
+        font-size: 5rem;
+    }
+
+    .opener-subtitle {
+        font-size: 2rem;
     }
 
     .logo-wrap {
@@ -485,6 +521,12 @@ footer {
 </head>
 <body>
 
+    <!-- ============ OPENER ============ -->
+    <header class="opener">
+        <h1 class="opener-title">BRAIDS</h1>
+        <p class="opener-subtitle">By Nauja</p>
+    </header>
+
     <!-- ============ HERO ============ -->
     <section class="hero">
         <!-- Background photo behind the hero — swap by replacing images/hero.svg with a real photo -->
@@ -496,7 +538,7 @@ footer {
         </div>
 
         <div class="container hero-content">
-            <h1>Braids That Speak Before You Do.</h1>
+            <h2>Braids That Speak Before You Do.</h2>
             <p>Premium extensions. Protective styles. Looks that last. Luxury braid installs designed for confidence, beauty, and long-lasting wear.</p>
             <div class="cta-row">
                 <a href="#booking" class="btn primary">Book Appointment</a>
