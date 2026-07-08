@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>BraidsByNauja™ | Photo Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --black: #0b0b0b;
+    --gold: #d6b37b;
+    --white: #fffdfb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+}
+.container {
+    width: min(900px, 92%);
+    margin: auto;
+    padding: 60px 0;
+}
+h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    margin-bottom: 8px;
+}
+.subtitle {
+    color: #c9b9ac;
+    margin-bottom: 40px;
+}
+/* ---------- Login ---------- */
+#login-panel {
+    max-width: 400px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 24px;
+    padding: 32px;
+}
+#login-panel input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    border: none;
+    background: var(--white);
+    color: #111;
+    font-family: inherit;
+    font-size: 1rem;
+}
+.btn {
+    padding: 14px 22px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--gold), #f5dfb2);
+    color: #111;
+}
+.btn.small {
+    padding: 8px 16px;
+    font-size: .85rem;
+}
+#login-error {
+    color: #e58a8a;
+    margin-top: 10px;
+    font-size: .9rem;
+    min-height: 1.2em;
+}
+/* ---------- Upload panel ---------- */
+#upload-panel { display: none; }
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 22px;
+}
+.slot {
+    background: #151515;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.1);
+}
+.slot img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: #1c1c1c;
+    display: block;
+}
+.slot-body {
+    padding: 16px;
+}
+.slot-body h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.slot-body input[type="file"] {
+    width: 100%;
+    font-size: .8rem;
+    color: #c9b9ac;
+    margin-bottom: 10px;
+}
+.slot-status {
+    font-size: .8rem;
+    margin-top: 8px;
+    min-height: 1.2em;
+    color: #9fe0b0;
+}
+.slot-status.error { color: #e58a8a; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Photo Manager</h1>
+    <p class="subtitle">Log in, then upload a new photo for any spot on the site. It replaces the old one automatically.</p>
+
+    <div id="login-panel">
+        <form id="login-form">
+            <input id="login-email" type="email" placeholder="Email" required>
+            <input id="login-password" type="password" placeholder="Password" required>
+            <button class="btn" type="submit" style="width:100%;">Log In</button>
+        </form>
+        <p id="login-error"></p>
+    </div>
+
+    <div id="upload-panel">
+        <div class="top-row">
+            <span id="whoami" class="subtitle" style="margin:0;"></span>
+            <button id="logout-btn" class="btn small">Log Out</button>
+        </div>
+        <div class="slots" id="slots"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const SUPABASE_URL = 'https://cessfiegclsjwszmhmqv.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_VxNojZOpgSe9R4Rv8nhgmQ_4N4WEPwi';
+    const BUCKET = 'site-images';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const SLOTS = [
+        { path: 'hero.jpg', label: 'Hero Background Photo' },
+        { path: 'logo.png', label: 'Logo' },
+        { path: 'before-1.jpg', label: 'Before / After — Photo 1' },
+        { path: 'before-2.jpg', label: 'Before / After — Photo 2' },
+        { path: 'gallery-boho.jpg', label: 'Gallery — Boho Knotless' },
+        { path: 'gallery-fulani.jpg', label: 'Gallery — Luxury Fulani' },
+        { path: 'gallery-silkpress.jpg', label: 'Gallery — Silk Press Braids' },
+        { path: 'stylist.jpg', label: 'Stylist Portrait' },
+        { path: 'ig-1.jpg', label: 'Instagram Photo 1' },
+        { path: 'ig-2.jpg', label: 'Instagram Photo 2' },
+        { path: 'ig-3.jpg', label: 'Instagram Photo 3' },
+        { path: 'ig-4.jpg', label: 'Instagram Photo 4' }
+    ];
+
+    function publicUrl(path) {
+        return supabaseClient.storage.from(BUCKET).getPublicUrl(path).data.publicUrl + '?t=' + Date.now();
+    }
+
+    function renderSlots() {
+        const container = document.getElementById('slots');
+        container.innerHTML = '';
+        SLOTS.forEach(slot => {
+            const card = document.createElement('div');
+            card.className = 'slot';
+            card.innerHTML = `
+                <img src="${publicUrl(slot.path)}" alt="${slot.label}" onerror="this.style.opacity=0.25;">
+                <div class="slot-body">
+                    <h3>${slot.label}</h3>
+                    <input type="file" accept="image/*" data-path="${slot.path}">
+                    <button class="btn small" data-upload="${slot.path}">Upload New Photo</button>
+                    <p class="slot-status"></p>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        container.querySelectorAll('button[data-upload]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const path = btn.dataset.upload;
+                const card = btn.closest('.slot');
+                const fileInput = card.querySelector('input[type="file"]');
+                const status = card.querySelector('.slot-status');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    status.textContent = 'Choose a photo first.';
+                    status.classList.add('error');
+                    return;
+                }
+
+                btn.disabled = true;
+                status.classList.remove('error');
+                status.textContent = 'Uploading...';
+
+                const { error } = await supabaseClient.storage.from(BUCKET).upload(path, file, {
+                    upsert: true,
+                    contentType: file.type,
+                    cacheControl: '60'
+                });
+
+                btn.disabled = false;
+
+                if (error) {
+                    status.textContent = 'Upload failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    status.textContent = 'Saved! Live on the site within a minute.';
+                    card.querySelector('img').src = publicUrl(path);
+                    fileInput.value = '';
+                }
+            });
+        });
+    }
+
+    async function showPanelForSession(session) {
+        if (session) {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('upload-panel').style.display = 'block';
+            document.getElementById('whoami').textContent = 'Logged in as ' + session.user.email;
+            renderSlots();
+        } else {
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('upload-panel').style.display = 'none';
+        }
+    }
+
+    supabaseClient.auth.getSession().then(({ data }) => showPanelForSession(data.session));
+    supabaseClient.auth.onAuthStateChange((_event, session) => showPanelForSession(session));
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorEl = document.getElementById('login-error');
+        errorEl.textContent = '';
+
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+            errorEl.textContent = 'Wrong email or password.';
+        }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabaseClient.auth.signOut();
+    });
+</script>
+
+</body>
+</html>
