@@ -88,12 +88,21 @@ h1, h2, h3 {
     max-width: 700px;
 }
 
-.logo-mark {
+.logo-wrap {
     position: absolute;
     top: 30px;
     left: 30px;
-    width: 240px;
     z-index: 3;
+    padding: 10px;
+    background: rgba(0, 0, 0, .35);
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+}
+
+.logo-mark {
+    width: 260px;
+    display: block;
 }
 
 .hero h1 {
@@ -150,7 +159,7 @@ h1, h2, h3 {
     backdrop-filter: blur(20px);
     border-radius: 28px;
     padding: 28px;
-    border: 1px solid rgba(255, 255, 255, .12);
+    border: 1px solid rgba(214, 179, 123, .35);
     box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
     max-width: 550px;
     margin: 0 auto;
@@ -218,6 +227,7 @@ h1, h2, h3 {
     background: #151515;
     border-radius: 28px;
     overflow: hidden;
+    border: 1px solid rgba(214, 179, 123, .35);
 }
 
 .card img {
@@ -252,6 +262,7 @@ h1, h2, h3 {
     border-radius: 28px;
     height: 500px;
     object-fit: cover;
+    border: 1px solid rgba(214, 179, 123, .35);
 }
 
 /* ---------- Stylist ---------- */
@@ -266,12 +277,14 @@ h1, h2, h3 {
 .stylist img {
     border-radius: 32px;
     height: 580px;
+    border: 1px solid rgba(214, 179, 123, .35);
 }
 
 .story {
     background: #121212;
     border-radius: 28px;
     padding: 40px;
+    border: 1px solid rgba(214, 179, 123, .35);
 }
 
 .story h2 {
@@ -297,6 +310,7 @@ h1, h2, h3 {
     background: #161616;
     padding: 30px;
     border-radius: 26px;
+    border: 1px solid rgba(214, 179, 123, .35);
 }
 
 .policy h3 {
@@ -326,6 +340,7 @@ h1, h2, h3 {
     height: 260px;
     border-radius: 24px;
     object-fit: cover;
+    border: 1px solid rgba(214, 179, 123, .35);
 }
 
 /* ---------- Footer ---------- */
@@ -365,10 +380,14 @@ footer {
         font-size: 3.2rem;
     }
 
-    .logo-mark {
-        width: 130px;
+    .logo-wrap {
         top: 16px;
         left: 16px;
+        padding: 6px;
+    }
+
+    .logo-mark {
+        width: 130px;
     }
 
     .card img,
@@ -388,7 +407,9 @@ footer {
         <img class="hero-bg-img" src="images/hero.svg" data-storage-path="hero.jpg" alt="Close-up of intricate braided hairstyle">
 
         <!-- Real logo artwork — replace via admin.html, or images/logo-white.png as a fallback -->
-        <img class="logo-mark" src="images/logo-white.png" data-storage-path="logo.png" alt="BraidsByNauja logo">
+        <div class="logo-wrap">
+            <img class="logo-mark" src="images/logo-white.png" data-storage-path="logo.png" alt="BraidsByNauja logo">
+        </div>
 
         <div class="container hero-content">
             <h1>Braids That Speak Before You Do.</h1>
@@ -396,34 +417,6 @@ footer {
             <div class="cta-row">
                 <a href="#booking" class="btn primary">Book Appointment</a>
                 <p class="disclaimer">Limited appointments available</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ REQUEST APPOINTMENT ============ -->
-    <section id="booking" class="section-alt">
-        <div class="container">
-            <div class="section-title fade-in">
-                <h2>Request Appointment</h2>
-                <p>Tell us what you're dreaming up and we'll take it from there.</p>
-            </div>
-            <div class="form-card fade-in">
-                <form id="booking-form">
-                    <select id="braid-type" aria-label="Braid type" required>
-                        <option value="" disabled selected>Select Braid Type</option>
-                        <option>Knotless Braids</option>
-                        <option>Boho Braids</option>
-                        <option>Fulani Braids</option>
-                        <option>Stitch Braids</option>
-                    </select>
-                    <input id="preferred-date" type="date" aria-label="Preferred date">
-                    <input id="preferred-time" type="time" aria-label="Preferred time">
-                    <input id="full-name" type="text" placeholder="Full Name" required>
-                    <input id="email" type="email" placeholder="Email Address" required>
-                    <input id="phone" type="tel" placeholder="Phone Number">
-                    <textarea id="notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
-                    <button class="btn primary" style="width:100%;" type="submit">Request Appointment</button>
-                </form>
             </div>
         </div>
     </section>
@@ -499,16 +492,16 @@ footer {
             </div>
             <div class="policy-grid">
                 <div class="policy fade-in">
-                    <h3>Prep Tips</h3>
-                    <p>Please arrive washed, blow-dried, and product-free unless otherwise discussed.</p>
+                    <h3 data-content-key="policy_prep_title">Prep Tips</h3>
+                    <p data-content-key="policy_prep_body">Please arrive washed, blow-dried, and product-free unless otherwise discussed.</p>
                 </div>
                 <div class="policy fade-in">
-                    <h3>Aftercare</h3>
-                    <p>Wrap hair nightly with satin and apply lightweight scalp oil to maintain freshness.</p>
+                    <h3 data-content-key="policy_aftercare_title">Aftercare</h3>
+                    <p data-content-key="policy_aftercare_body">Wrap hair nightly with satin and apply lightweight scalp oil to maintain freshness.</p>
                 </div>
                 <div class="policy fade-in">
-                    <h3>Deposit Policy</h3>
-                    <p>A non-refundable deposit is required to secure all appointments.</p>
+                    <h3 data-content-key="policy_deposit_title">Deposit Policy</h3>
+                    <p data-content-key="policy_deposit_body">A non-refundable deposit is required to secure all appointments.</p>
                 </div>
             </div>
         </div>
@@ -530,6 +523,34 @@ footer {
             </div>
             <div class="cta-row" style="justify-content:center;">
                 <a class="btn primary" href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener" style="text-decoration:none; display:inline-block;">@braidsbynauja</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ REQUEST APPOINTMENT ============ -->
+    <section id="booking" class="section-alt">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Request Appointment</h2>
+                <p>Tell us what you're dreaming up and we'll take it from there.</p>
+            </div>
+            <div class="form-card fade-in">
+                <form id="booking-form">
+                    <select id="braid-type" aria-label="Braid type" required>
+                        <option value="" disabled selected>Select Braid Type</option>
+                        <option>Knotless Braids</option>
+                        <option>Boho Braids</option>
+                        <option>Fulani Braids</option>
+                        <option>Stitch Braids</option>
+                    </select>
+                    <input id="preferred-date" type="date" aria-label="Preferred date">
+                    <input id="preferred-time" type="time" aria-label="Preferred time">
+                    <input id="full-name" type="text" placeholder="Full Name" required>
+                    <input id="email" type="email" placeholder="Email Address" required>
+                    <input id="phone" type="tel" placeholder="Phone Number">
+                    <textarea id="notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
+                    <button class="btn primary" style="width:100%;" type="submit">Request Appointment</button>
+                </form>
             </div>
         </div>
     </section>
@@ -603,6 +624,20 @@ footer {
                 bookingForm.reset();
             }
         });
+    </script>
+
+    <!-- ============ WIFE-MANAGED SITE TEXT (Supabase table) ============ -->
+    <script>
+        (async () => {
+            const { data, error } = await supabaseClient.from('site_content').select('key, value');
+            if (error || !data) return;
+
+            const contentByKey = Object.fromEntries(data.map(row => [row.key, row.value]));
+            document.querySelectorAll('[data-content-key]').forEach(el => {
+                const value = contentByKey[el.dataset.contentKey];
+                if (value) el.textContent = value;
+            });
+        })();
     </script>
 
 </body>
