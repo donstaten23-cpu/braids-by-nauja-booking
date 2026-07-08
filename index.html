@@ -393,20 +393,20 @@ footer {
 
             <div class="form-card">
                 <h3>Request Appointment</h3>
-                <form>
-                    <select aria-label="Braid type">
-                        <option>Select Braid Type</option>
+                <form id="booking-form">
+                    <select id="braid-type" aria-label="Braid type" required>
+                        <option value="" disabled selected>Select Braid Type</option>
                         <option>Knotless Braids</option>
                         <option>Boho Braids</option>
                         <option>Fulani Braids</option>
                         <option>Stitch Braids</option>
                     </select>
-                    <input type="date" aria-label="Preferred date">
-                    <input type="time" aria-label="Preferred time">
-                    <input type="text" placeholder="Full Name">
-                    <input type="email" placeholder="Email Address">
-                    <input type="tel" placeholder="Phone Number">
-                    <textarea placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
+                    <input id="preferred-date" type="date" aria-label="Preferred date">
+                    <input id="preferred-time" type="time" aria-label="Preferred time">
+                    <input id="full-name" type="text" placeholder="Full Name" required>
+                    <input id="email" type="email" placeholder="Email Address" required>
+                    <input id="phone" type="tel" placeholder="Phone Number">
+                    <textarea id="notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
                     <button class="btn primary" style="width:100%;" type="submit">Request Appointment</button>
                 </form>
             </div>
@@ -535,6 +535,47 @@ footer {
         }, { threshold: 0.15 });
 
         document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    </script>
+
+    <!-- ============ SUPABASE BOOKING SUBMISSION ============ -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // TODO: replace with your project's values (Supabase dashboard -> Project Settings -> API)
+        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const bookingForm = document.getElementById('booking-form');
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = bookingForm.querySelector('button[type="submit"]');
+            const originalLabel = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            const { error } = await supabaseClient.from('bookings').insert([{
+                braid_type: document.getElementById('braid-type').value,
+                preferred_date: document.getElementById('preferred-date').value || null,
+                preferred_time: document.getElementById('preferred-time').value || null,
+                full_name: document.getElementById('full-name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                notes: document.getElementById('notes').value
+            }]);
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
+
+            if (error) {
+                console.error(error);
+                alert('Something went wrong sending your request. Please try again or reach out directly.');
+            } else {
+                alert('Thank you! Your appointment request has been received.');
+                bookingForm.reset();
+            }
+        });
     </script>
 
 </body>
