@@ -214,6 +214,11 @@ h1 {
         </div>
         <div class="slots" id="slots"></div>
 
+        <h2 class="section-heading">Pricing</h2>
+        <p class="subtitle" style="margin-bottom:20px;">Add, edit, or remove services and prices as needed.</p>
+        <div class="text-fields" id="pricing-items"></div>
+        <button id="add-pricing-btn" class="btn small" style="margin-top:16px;">+ Add New</button>
+
         <h2 class="section-heading">Hair Care &amp; Policies</h2>
         <p class="subtitle" style="margin-bottom:20px;">Add, edit, or remove as many of these as you like — the site shows however many exist.</p>
         <div class="text-fields" id="policy-items"></div>
@@ -413,6 +418,116 @@ h1 {
         renderPolicyItems();
     });
 
+    async function renderPricingItems() {
+        const container = document.getElementById('pricing-items');
+        const { data, error } = await supabaseClient
+            .from('pricing_items')
+            .select('id, name, price, description')
+            .order('created_at', { ascending: true });
+
+        container.innerHTML = '';
+        if (error || !data) return;
+
+        data.forEach(item => {
+            const wrap = document.createElement('div');
+            wrap.className = 'text-field';
+            wrap.dataset.id = item.id;
+            wrap.innerHTML = `
+                <div class="item-view">
+                    <h4 class="item-title-display"></h4>
+                    <p class="item-body-display"></p>
+                    <div class="item-actions" style="margin-top:10px;">
+                        <button class="btn small item-edit">Edit</button>
+                        <button class="btn small danger item-delete">Delete</button>
+                        <span class="item-status"></span>
+                    </div>
+                </div>
+                <div class="item-edit-form" style="display:none;">
+                    <label>Service Name</label>
+                    <input type="text" class="item-name">
+                    <label>Price</label>
+                    <input type="text" class="item-price">
+                    <label>Description</label>
+                    <textarea class="item-description"></textarea>
+                    <div class="item-actions">
+                        <button class="btn small item-save">Save</button>
+                        <button class="btn small neutral item-cancel">Cancel</button>
+                        <span class="item-status"></span>
+                    </div>
+                </div>
+            `;
+            wrap.querySelector('.item-title-display').textContent = `${item.name} — ${item.price}`;
+            wrap.querySelector('.item-body-display').textContent = item.description;
+            wrap.querySelector('.item-name').value = item.name;
+            wrap.querySelector('.item-price').value = item.price;
+            wrap.querySelector('.item-description').value = item.description;
+            container.appendChild(wrap);
+        });
+
+        function setMode(wrap, mode) {
+            wrap.querySelector('.item-view').style.display = mode === 'view' ? 'block' : 'none';
+            wrap.querySelector('.item-edit-form').style.display = mode === 'edit' ? 'block' : 'none';
+        }
+
+        container.querySelectorAll('.item-edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setMode(btn.closest('.text-field'), 'edit');
+            });
+        });
+
+        container.querySelectorAll('.item-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setMode(btn.closest('.text-field'), 'view');
+            });
+        });
+
+        container.querySelectorAll('.item-save').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const wrap = btn.closest('.text-field');
+                const status = wrap.querySelector('.item-edit-form .item-status');
+                status.classList.remove('error');
+                status.textContent = 'Saving...';
+
+                const name = wrap.querySelector('.item-name').value;
+                const price = wrap.querySelector('.item-price').value;
+                const description = wrap.querySelector('.item-description').value;
+
+                const { error } = await supabaseClient.from('pricing_items').update({ name, price, description }).eq('id', wrap.dataset.id);
+
+                if (error) {
+                    status.textContent = 'Failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    wrap.querySelector('.item-title-display').textContent = `${name} — ${price}`;
+                    wrap.querySelector('.item-body-display').textContent = description;
+                    status.textContent = '';
+                    setMode(wrap, 'view');
+                }
+            });
+        });
+
+        container.querySelectorAll('.item-delete').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const wrap = btn.closest('.text-field');
+                if (!confirm('Remove this item from the site?')) return;
+
+                const { error } = await supabaseClient.from('pricing_items').delete().eq('id', wrap.dataset.id);
+                if (error) {
+                    const status = wrap.querySelector('.item-view .item-status');
+                    status.textContent = 'Failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    wrap.remove();
+                }
+            });
+        });
+    }
+
+    document.getElementById('add-pricing-btn').addEventListener('click', async () => {
+        await supabaseClient.from('pricing_items').insert({ name: 'New Service', price: '$0', description: '' });
+        renderPricingItems();
+    });
+
     async function showPanelForSession(session) {
         if (session) {
             document.getElementById('login-panel').style.display = 'none';
@@ -420,6 +535,7 @@ h1 {
             document.getElementById('whoami').textContent = 'Logged in as ' + session.user.email;
             renderSlots();
             renderPolicyItems();
+            renderPricingItems();
         } else {
             document.getElementById('login-panel').style.display = 'block';
             document.getElementById('upload-panel').style.display = 'none';
