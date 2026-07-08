@@ -162,13 +162,34 @@ h1 {
     min-height: 70px;
     resize: vertical;
 }
-#policies-status {
-    font-size: .85rem;
-    margin-top: 14px;
-    min-height: 1.2em;
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.item-actions .btn.danger {
+    background: transparent;
+    border: 1px solid rgba(229,138,138,.5);
+    color: #e58a8a;
+}
+.item-actions .btn.neutral {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.25);
+    color: var(--white);
+}
+.item-title-display {
+    font-size: 1.05rem;
+    margin-bottom: 6px;
+}
+.item-body-display {
+    color: #c9b9ac;
+    font-size: .9rem;
+}
+.item-status {
+    font-size: .8rem;
     color: #9fe0b0;
 }
-#policies-status.error { color: #e58a8a; }
+.item-status.error { color: #e58a8a; }
 </style>
 </head>
 <body>
@@ -194,9 +215,9 @@ h1 {
         <div class="slots" id="slots"></div>
 
         <h2 class="section-heading">Hair Care &amp; Policies</h2>
-        <div class="text-fields" id="policy-fields"></div>
-        <button id="save-policies-btn" class="btn" style="margin-top:16px;">Save Policies</button>
-        <p id="policies-status"></p>
+        <p class="subtitle" style="margin-bottom:20px;">Add, edit, or remove as many of these as you like — the site shows however many exist.</p>
+        <div class="text-fields" id="policy-items"></div>
+        <button id="add-policy-btn" class="btn small" style="margin-top:16px;">+ Add New</button>
     </div>
 </div>
 
@@ -283,50 +304,113 @@ h1 {
         });
     }
 
-    const POLICY_FIELDS = [
-        { key: 'policy_prep_title', label: 'Prep Tips — Heading', type: 'input' },
-        { key: 'policy_prep_body', label: 'Prep Tips — Text', type: 'textarea' },
-        { key: 'policy_aftercare_title', label: 'Aftercare — Heading', type: 'input' },
-        { key: 'policy_aftercare_body', label: 'Aftercare — Text', type: 'textarea' },
-        { key: 'policy_deposit_title', label: 'Deposit Policy — Heading', type: 'input' },
-        { key: 'policy_deposit_body', label: 'Deposit Policy — Text', type: 'textarea' }
-    ];
-
-    async function renderPolicyFields() {
-        const container = document.getElementById('policy-fields');
-        const { data, error } = await supabaseClient.from('site_content').select('key, value');
-        const contentByKey = error ? {} : Object.fromEntries(data.map(row => [row.key, row.value]));
+    async function renderPolicyItems() {
+        const container = document.getElementById('policy-items');
+        const { data, error } = await supabaseClient
+            .from('policy_items')
+            .select('id, title, body')
+            .order('created_at', { ascending: true });
 
         container.innerHTML = '';
-        POLICY_FIELDS.forEach(field => {
+        if (error || !data) return;
+
+        data.forEach(item => {
             const wrap = document.createElement('div');
             wrap.className = 'text-field';
-            const value = contentByKey[field.key] || '';
-            wrap.innerHTML = field.type === 'textarea'
-                ? `<label>${field.label}</label><textarea data-content-key="${field.key}">${value}</textarea>`
-                : `<label>${field.label}</label><input type="text" data-content-key="${field.key}" value="${value}">`;
+            wrap.dataset.id = item.id;
+            wrap.innerHTML = `
+                <div class="item-view">
+                    <h4 class="item-title-display"></h4>
+                    <p class="item-body-display"></p>
+                    <div class="item-actions" style="margin-top:10px;">
+                        <button class="btn small item-edit">Edit</button>
+                        <button class="btn small danger item-delete">Delete</button>
+                        <span class="item-status"></span>
+                    </div>
+                </div>
+                <div class="item-edit-form" style="display:none;">
+                    <label>Heading</label>
+                    <input type="text" class="item-title">
+                    <label>Text</label>
+                    <textarea class="item-body"></textarea>
+                    <div class="item-actions">
+                        <button class="btn small item-save">Save</button>
+                        <button class="btn small neutral item-cancel">Cancel</button>
+                        <span class="item-status"></span>
+                    </div>
+                </div>
+            `;
+            wrap.querySelector('.item-title-display').textContent = item.title;
+            wrap.querySelector('.item-body-display').textContent = item.body;
+            wrap.querySelector('.item-title').value = item.title;
+            wrap.querySelector('.item-body').value = item.body;
             container.appendChild(wrap);
+        });
+
+        function setMode(wrap, mode) {
+            wrap.querySelector('.item-view').style.display = mode === 'view' ? 'block' : 'none';
+            wrap.querySelector('.item-edit-form').style.display = mode === 'edit' ? 'block' : 'none';
+        }
+
+        container.querySelectorAll('.item-edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const wrap = btn.closest('.text-field');
+                wrap.querySelector('.item-title').value = wrap.querySelector('.item-title-display').textContent;
+                wrap.querySelector('.item-body').value = wrap.querySelector('.item-body-display').textContent;
+                setMode(wrap, 'edit');
+            });
+        });
+
+        container.querySelectorAll('.item-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setMode(btn.closest('.text-field'), 'view');
+            });
+        });
+
+        container.querySelectorAll('.item-save').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const wrap = btn.closest('.text-field');
+                const status = wrap.querySelector('.item-edit-form .item-status');
+                status.classList.remove('error');
+                status.textContent = 'Saving...';
+
+                const title = wrap.querySelector('.item-title').value;
+                const body = wrap.querySelector('.item-body').value;
+
+                const { error } = await supabaseClient.from('policy_items').update({ title, body }).eq('id', wrap.dataset.id);
+
+                if (error) {
+                    status.textContent = 'Failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    wrap.querySelector('.item-title-display').textContent = title;
+                    wrap.querySelector('.item-body-display').textContent = body;
+                    status.textContent = '';
+                    setMode(wrap, 'view');
+                }
+            });
+        });
+
+        container.querySelectorAll('.item-delete').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const wrap = btn.closest('.text-field');
+                if (!confirm('Remove this item from the site?')) return;
+
+                const { error } = await supabaseClient.from('policy_items').delete().eq('id', wrap.dataset.id);
+                if (error) {
+                    const status = wrap.querySelector('.item-view .item-status');
+                    status.textContent = 'Failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    wrap.remove();
+                }
+            });
         });
     }
 
-    document.getElementById('save-policies-btn').addEventListener('click', async () => {
-        const status = document.getElementById('policies-status');
-        const rows = Array.from(document.querySelectorAll('[data-content-key]')).map(el => ({
-            key: el.dataset.contentKey,
-            value: el.value
-        }));
-
-        status.classList.remove('error');
-        status.textContent = 'Saving...';
-
-        const { error } = await supabaseClient.from('site_content').upsert(rows);
-
-        if (error) {
-            status.textContent = 'Save failed: ' + error.message;
-            status.classList.add('error');
-        } else {
-            status.textContent = 'Saved! Live on the site within a minute.';
-        }
+    document.getElementById('add-policy-btn').addEventListener('click', async () => {
+        await supabaseClient.from('policy_items').insert({ title: 'New Heading', body: 'New text goes here.' });
+        renderPolicyItems();
     });
 
     async function showPanelForSession(session) {
@@ -335,7 +419,7 @@ h1 {
             document.getElementById('upload-panel').style.display = 'block';
             document.getElementById('whoami').textContent = 'Logged in as ' + session.user.email;
             renderSlots();
-            renderPolicyFields();
+            renderPolicyItems();
         } else {
             document.getElementById('login-panel').style.display = 'block';
             document.getElementById('upload-panel').style.display = 'none';
