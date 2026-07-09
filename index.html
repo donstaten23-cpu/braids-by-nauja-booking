@@ -937,6 +937,46 @@ footer {
         });
     </script>
 
+    <!-- ============ AVAILABLE BOOKING DATES (from Google Calendar) ============ -->
+    <script>
+        (async () => {
+            const dateInput = document.getElementById('preferred-date');
+
+            const { data, error } = await supabaseClient.functions.invoke('calendar-availability');
+
+            if (error || !data || !Array.isArray(data.availableDates)) {
+                console.error('Could not load available dates — leaving manual date entry in place.', error);
+                return;
+            }
+
+            const select = document.createElement('select');
+            select.id = 'preferred-date';
+
+            if (data.availableDates.length === 0) {
+                select.innerHTML = '<option value="" disabled selected>No dates currently available</option>';
+                select.disabled = true;
+            } else {
+                select.required = true;
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                placeholder.textContent = 'Select an Available Date';
+                select.appendChild(placeholder);
+
+                data.availableDates.forEach((iso) => {
+                    const opt = document.createElement('option');
+                    opt.value = iso;
+                    const d = new Date(iso + 'T00:00:00');
+                    opt.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    select.appendChild(opt);
+                });
+            }
+
+            dateInput.replaceWith(select);
+        })();
+    </script>
+
     <!-- ============ WIFE-MANAGED POLICY LIST (Supabase table) ============ -->
     <script>
         (async () => {
