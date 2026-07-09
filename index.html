@@ -142,19 +142,15 @@ h1, h2, h3 {
 
 .logo-wrap {
     position: absolute;
-    top: 30px;
-    left: 30px;
+    top: 24px;
+    left: 24px;
     z-index: 3;
-    padding: 10px;
-    background: rgba(0, 0, 0, .35);
-    border: 1px solid rgba(255, 255, 255, .25);
-    border-radius: 20px;
-    backdrop-filter: blur(6px);
 }
 
 .logo-mark {
-    width: 260px;
+    width: 220px;
     display: block;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, .55));
 }
 
 .hero h2 {
@@ -403,6 +399,14 @@ h1, h2, h3 {
     color: var(--white);
     font-size: .95rem;
     font-weight: 600;
+    white-space: pre-line;
+}
+
+.price-card .price-details {
+    color: #c9b9ac;
+    font-size: .88rem;
+    margin-top: 10px;
+    white-space: pre-line;
 }
 
 /* ---------- Policies ---------- */
@@ -457,6 +461,63 @@ footer {
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, .1);
     color: #c9b9ac;
+}
+
+/* ---------- Side section nav ---------- */
+
+.side-nav {
+    position: fixed;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 60;
+}
+
+.side-nav-dot {
+    position: relative;
+    display: block;
+    width: 10px;
+    height: 10px;
+}
+
+.side-nav-dot span {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: transparent;
+    transition: background .3s ease, transform .3s ease;
+}
+
+.side-nav-dot.active span {
+    background: var(--gold);
+    transform: scale(1.2);
+}
+
+.side-nav-dot::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-size: .75rem;
+    color: var(--white);
+    background: rgba(11, 11, 11, .85);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(214, 179, 123, .35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+
+.side-nav-dot:hover::before {
+    opacity: 1;
 }
 
 /* ---------- Back to top ---------- */
@@ -531,11 +592,14 @@ footer {
     .logo-wrap {
         top: 16px;
         left: 16px;
-        padding: 6px;
     }
 
     .logo-mark {
-        width: 130px;
+        width: 120px;
+    }
+
+    .side-nav {
+        display: none;
     }
 
     .card img,
@@ -549,8 +613,20 @@ footer {
 </head>
 <body>
 
+    <!-- ============ SIDE SECTION NAV ============ -->
+    <nav class="side-nav" aria-label="Page section navigation">
+        <a href="#top" class="side-nav-dot" data-label="Home"><span></span></a>
+        <a href="#pricing" class="side-nav-dot" data-label="Pricing"><span></span></a>
+        <a href="#transformations" class="side-nav-dot" data-label="Transformations"><span></span></a>
+        <a href="#favorites" class="side-nav-dot" data-label="Favorites"><span></span></a>
+        <a href="#stylist" class="side-nav-dot" data-label="Stylist"><span></span></a>
+        <a href="#policies" class="side-nav-dot" data-label="Policies"><span></span></a>
+        <a href="#booking" class="side-nav-dot" data-label="Book Now"><span></span></a>
+        <a href="#instagram" class="side-nav-dot" data-label="Instagram"><span></span></a>
+    </nav>
+
     <!-- ============ OPENER ============ -->
-    <header class="opener">
+    <header class="opener" id="top">
         <!-- Blurred echo of the hero photo, fading to black behind the title -->
         <img class="opener-bg-img" src="images/hero.svg" data-storage-path="hero.jpg" alt="">
         <div class="opener-overlay"></div>
@@ -593,28 +669,32 @@ footer {
                     <h3>Knotless Braids</h3>
                     <p class="price">$180+</p>
                     <p class="price-description">Price varies by length and density.</p>
+                    <p class="price-details"></p>
                 </div>
                 <div class="price-card fade-in">
                     <h3>Boho Braids</h3>
                     <p class="price">$200+</p>
                     <p class="price-description">Includes curly ends.</p>
+                    <p class="price-details"></p>
                 </div>
                 <div class="price-card fade-in">
                     <h3>Fulani Braids</h3>
                     <p class="price">$160+</p>
                     <p class="price-description">Classic style, beads available.</p>
+                    <p class="price-details"></p>
                 </div>
                 <div class="price-card fade-in">
                     <h3>Stitch Braids</h3>
                     <p class="price">$120+</p>
                     <p class="price-description">Sleek, long-lasting cornrow style.</p>
+                    <p class="price-details"></p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ============ LUXURY TRANSFORMATIONS (before / after) ============ -->
-    <section>
+    <section id="transformations">
         <div class="container">
             <div class="section-title fade-in">
                 <h2>Luxury Transformations</h2>
@@ -629,7 +709,7 @@ footer {
     </section>
 
     <!-- ============ CLIENT FAVORITES (gallery) ============ -->
-    <section class="section-alt">
+    <section id="favorites" class="section-alt">
         <div class="container">
             <div class="section-title fade-in">
                 <h2>Client Favorites</h2>
@@ -663,7 +743,7 @@ footer {
     </section>
 
     <!-- ============ MEET THE STYLIST ============ -->
-    <section>
+    <section id="stylist">
         <div class="container stylist">
             <!-- Replace images/stylist.svg with a portrait of Nauja -->
             <img class="fade-in" src="images/stylist.svg" data-storage-path="stylist.jpg" alt="Portrait of Nauja, professional braid stylist">
@@ -676,7 +756,7 @@ footer {
     </section>
 
     <!-- ============ HAIR CARE & POLICIES ============ -->
-    <section class="section-alt">
+    <section id="policies" class="section-alt">
         <div class="container">
             <div class="section-title fade-in">
                 <h2>Hair Care &amp; Policies</h2>
@@ -736,7 +816,7 @@ footer {
     </section>
 
     <!-- ============ INSTAGRAM ============ -->
-    <section>
+    <section id="instagram">
         <div class="container instagram">
             <div class="section-title fade-in">
                 <h2>Tag Your Braided Masterpiece Look</h2>
@@ -770,6 +850,25 @@ footer {
         document.getElementById('back-to-top').addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+    </script>
+
+    <!-- ============ SIDE NAV ACTIVE-SECTION TRACKING ============ -->
+    <script>
+        const navDots = document.querySelectorAll('.side-nav-dot');
+        const navSections = Array.from(navDots)
+            .map(dot => document.querySelector(dot.getAttribute('href')))
+            .filter(Boolean);
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = '#' + entry.target.id;
+                    navDots.forEach(dot => dot.classList.toggle('active', dot.getAttribute('href') === id));
+                }
+            });
+        }, { rootMargin: '-45% 0px -45% 0px' });
+
+        navSections.forEach(section => navObserver.observe(section));
     </script>
 
     <script>
@@ -867,7 +966,7 @@ footer {
         (async () => {
             const { data, error } = await supabaseClient
                 .from('pricing_items')
-                .select('name, price, description')
+                .select('name, price, description, details')
                 .order('created_at', { ascending: true });
 
             if (error || !data || data.length === 0) return;
@@ -877,10 +976,11 @@ footer {
             data.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'price-card fade-in';
-                card.innerHTML = `<h3></h3><p class="price"></p><p class="price-description"></p>`;
+                card.innerHTML = `<h3></h3><p class="price"></p><p class="price-description"></p><p class="price-details"></p>`;
                 card.querySelector('h3').textContent = item.name;
                 card.querySelector('.price').textContent = item.price;
                 card.querySelector('.price-description').textContent = item.description;
+                card.querySelector('.price-details').textContent = item.details || '';
                 grid.appendChild(card);
                 fadeObserver.observe(card);
             });
