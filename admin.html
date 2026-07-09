@@ -184,6 +184,14 @@ h1 {
 .item-body-display {
     color: #c9b9ac;
     font-size: .9rem;
+    white-space: pre-line;
+}
+
+.item-details-display {
+    color: #8f8f8f;
+    font-size: .85rem;
+    margin-top: 6px;
+    white-space: pre-line;
 }
 .item-status {
     font-size: .8rem;
@@ -422,7 +430,7 @@ h1 {
         const container = document.getElementById('pricing-items');
         const { data, error } = await supabaseClient
             .from('pricing_items')
-            .select('id, name, price, description')
+            .select('id, name, price, description, details')
             .order('created_at', { ascending: true });
 
         container.innerHTML = '';
@@ -436,6 +444,7 @@ h1 {
                 <div class="item-view">
                     <h4 class="item-title-display"></h4>
                     <p class="item-body-display"></p>
+                    <p class="item-details-display"></p>
                     <div class="item-actions" style="margin-top:10px;">
                         <button class="btn small item-edit">Edit</button>
                         <button class="btn small danger item-delete">Delete</button>
@@ -447,8 +456,10 @@ h1 {
                     <input type="text" class="item-name">
                     <label>Price</label>
                     <input type="text" class="item-price">
-                    <label>Description</label>
+                    <label>Description (short line under the price)</label>
                     <textarea class="item-description"></textarea>
+                    <label>Hair / Service Details (its own space — one line per point)</label>
+                    <textarea class="item-details"></textarea>
                     <div class="item-actions">
                         <button class="btn small item-save">Save</button>
                         <button class="btn small neutral item-cancel">Cancel</button>
@@ -458,9 +469,11 @@ h1 {
             `;
             wrap.querySelector('.item-title-display').textContent = `${item.name} — ${item.price}`;
             wrap.querySelector('.item-body-display').textContent = item.description;
+            wrap.querySelector('.item-details-display').textContent = item.details || '';
             wrap.querySelector('.item-name').value = item.name;
             wrap.querySelector('.item-price').value = item.price;
             wrap.querySelector('.item-description').value = item.description;
+            wrap.querySelector('.item-details').value = item.details || '';
             container.appendChild(wrap);
         });
 
@@ -491,8 +504,9 @@ h1 {
                 const name = wrap.querySelector('.item-name').value;
                 const price = wrap.querySelector('.item-price').value;
                 const description = wrap.querySelector('.item-description').value;
+                const details = wrap.querySelector('.item-details').value;
 
-                const { error } = await supabaseClient.from('pricing_items').update({ name, price, description }).eq('id', wrap.dataset.id);
+                const { error } = await supabaseClient.from('pricing_items').update({ name, price, description, details }).eq('id', wrap.dataset.id);
 
                 if (error) {
                     status.textContent = 'Failed: ' + error.message;
@@ -500,6 +514,7 @@ h1 {
                 } else {
                     wrap.querySelector('.item-title-display').textContent = `${name} — ${price}`;
                     wrap.querySelector('.item-body-display').textContent = description;
+                    wrap.querySelector('.item-details-display').textContent = details;
                     status.textContent = '';
                     setMode(wrap, 'view');
                 }
