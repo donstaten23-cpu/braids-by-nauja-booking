@@ -210,54 +210,33 @@ h1, h2, h3 {
     background: rgba(214, 179, 123, .1);
 }
 
-/* ---------- Booking form card ---------- */
+/* ---------- Booking embed ---------- */
 
-.form-card {
-    background: rgba(255, 255, 255, .08);
-    backdrop-filter: blur(20px);
-    border-radius: 28px;
-    padding: 28px;
-    border: 1px solid rgba(214, 179, 123, .35);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
-    max-width: 550px;
+.booking-embed {
+    max-width: 900px;
     margin: 0 auto;
-}
-
-.field-label {
-    display: block;
-    font-size: .8rem;
-    font-weight: 600;
-    color: var(--gold);
-    margin-bottom: 6px;
-}
-
-.form-card input,
-.form-card select,
-.form-card textarea {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 14px;
-    border-radius: 16px;
-    border: none;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid rgba(214, 179, 123, .35);
     background: var(--white);
-    color: #111;
-    font-family: inherit;
-    font-size: 1rem;
 }
 
-.form-card select {
-    border-radius: 999px;
-    padding: 14px 24px;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23111'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 20px center;
-    background-size: 14px;
+.booking-embed iframe {
+    width: 100%;
+    height: 720px;
+    border: none;
+    display: block;
 }
 
-.form-card textarea {
-    min-height: 100px;
-    resize: none;
+.booking-fallback {
+    text-align: center;
+    margin-top: 18px;
+    color: #d8d0cb;
+    font-size: .9rem;
+}
+
+.booking-fallback a {
+    color: var(--gold);
 }
 
 /* ---------- Section titles ---------- */
@@ -602,6 +581,10 @@ footer {
         display: none;
     }
 
+    .booking-embed iframe {
+        height: 640px;
+    }
+
     .card img,
     .before-after img,
     .stylist img,
@@ -785,33 +768,18 @@ footer {
         <div class="container">
             <div class="section-title fade-in">
                 <h2>Request Appointment</h2>
-                <p>Tell us what you're dreaming up and we'll take it from there.</p>
+                <p>Pick an open time below — booked instantly, no back-and-forth.</p>
             </div>
-            <div class="form-card fade-in">
-                <form id="booking-form">
-                    <label class="field-label" for="braid-type">Braid Type</label>
-                    <select id="braid-type" required>
-                        <option value="" disabled selected>Select Braid Type</option>
-                        <option>Knotless Braids</option>
-                        <option>Boho Braids</option>
-                        <option>Fulani Braids</option>
-                        <option>Stitch Braids</option>
-                    </select>
-                    <label class="field-label" for="preferred-date">Preferred Date</label>
-                    <input id="preferred-date" type="date">
-                    <label class="field-label" for="preferred-time">Preferred Time</label>
-                    <input id="preferred-time" type="time">
-                    <label class="field-label" for="full-name">Full Name</label>
-                    <input id="full-name" type="text" placeholder="Full Name" required>
-                    <label class="field-label" for="email">Email Address</label>
-                    <input id="email" type="email" placeholder="Email Address" required>
-                    <label class="field-label" for="phone">Phone Number</label>
-                    <input id="phone" type="tel" placeholder="Phone Number">
-                    <label class="field-label" for="notes">Additional Notes</label>
-                    <textarea id="notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
-                    <button class="btn primary" style="width:100%;" type="submit">Request Appointment</button>
-                </form>
+            <div class="booking-embed fade-in">
+                <!-- TODO: replace both instances of this URL with your Google Calendar
+                     Appointment Schedule's booking page link (Calendar -> Create ->
+                     Appointment schedule -> Share -> Copy link) -->
+                <iframe src="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ19IvjQzfc0JmO_bsFX3gY6kYRybOHURFMmjcWQjxTQEm0rFDgNmepBnOSWwFa2Ev2LOz8IMsgy" title="Book an appointment" loading="lazy"></iframe>
             </div>
+            <p class="booking-fallback fade-in">
+                Having trouble with the calendar above?
+                <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ19IvjQzfc0JmO_bsFX3gY6kYRybOHURFMmjcWQjxTQEm0rFDgNmepBnOSWwFa2Ev2LOz8IMsgy" target="_blank" rel="noopener">Open the booking page directly</a>.
+            </p>
         </div>
     </section>
 
@@ -896,85 +864,13 @@ footer {
         });
     </script>
 
-    <!-- ============ SUPABASE BOOKING SUBMISSION ============ -->
+    <!-- ============ SUPABASE CLIENT (used by the policy/pricing lists below) ============ -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // TODO: replace with your project's values (Supabase dashboard -> Project Settings -> API)
         const SUPABASE_URL = 'https://cessfiegclsjwszmhmqv.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_VxNojZOpgSe9R4Rv8nhgmQ_4N4WEPwi';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const bookingForm = document.getElementById('booking-form');
-        bookingForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitBtn = bookingForm.querySelector('button[type="submit"]');
-            const originalLabel = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-
-            const { error } = await supabaseClient.from('bookings').insert([{
-                braid_type: document.getElementById('braid-type').value,
-                preferred_date: document.getElementById('preferred-date').value || null,
-                preferred_time: document.getElementById('preferred-time').value || null,
-                full_name: document.getElementById('full-name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                notes: document.getElementById('notes').value
-            }]);
-
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalLabel;
-
-            if (error) {
-                console.error(error);
-                alert('Something went wrong sending your request. Please try again or reach out directly.');
-            } else {
-                alert('Thank you! Your appointment request has been received.');
-                bookingForm.reset();
-            }
-        });
-    </script>
-
-    <!-- ============ AVAILABLE BOOKING DATES (from Google Calendar) ============ -->
-    <script>
-        (async () => {
-            const dateInput = document.getElementById('preferred-date');
-
-            const { data, error } = await supabaseClient.functions.invoke('calendar-availability');
-
-            if (error || !data || !Array.isArray(data.availableDates)) {
-                console.error('Could not load available dates — leaving manual date entry in place.', error);
-                return;
-            }
-
-            const select = document.createElement('select');
-            select.id = 'preferred-date';
-
-            if (data.availableDates.length === 0) {
-                select.innerHTML = '<option value="" disabled selected>No dates currently available</option>';
-                select.disabled = true;
-            } else {
-                select.required = true;
-                const placeholder = document.createElement('option');
-                placeholder.value = '';
-                placeholder.disabled = true;
-                placeholder.selected = true;
-                placeholder.textContent = 'Select an Available Date';
-                select.appendChild(placeholder);
-
-                data.availableDates.forEach((iso) => {
-                    const opt = document.createElement('option');
-                    opt.value = iso;
-                    const d = new Date(iso + 'T00:00:00');
-                    opt.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                    select.appendChild(opt);
-                });
-            }
-
-            dateInput.replaceWith(select);
-        })();
     </script>
 
     <!-- ============ WIFE-MANAGED POLICY LIST (Supabase table) ============ -->
