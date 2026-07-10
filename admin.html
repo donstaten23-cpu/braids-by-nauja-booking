@@ -227,7 +227,12 @@ h1 {
         <div class="text-fields" id="pricing-items"></div>
         <button id="add-pricing-btn" class="btn small" style="margin-top:16px;">+ Add New</button>
 
-        <h2 class="section-heading">Hair Care &amp; Policies</h2>
+        <h2 class="section-heading">Hair Care</h2>
+        <p class="subtitle" style="margin-bottom:20px;">Add, edit, or remove as many of these as you like — the site shows however many exist.</p>
+        <div class="text-fields" id="haircare-items"></div>
+        <button id="add-haircare-btn" class="btn small" style="margin-top:16px;">+ Add New</button>
+
+        <h2 class="section-heading">Policies</h2>
         <p class="subtitle" style="margin-bottom:20px;">Add, edit, or remove as many of these as you like — the site shows however many exist.</p>
         <div class="text-fields" id="policy-items"></div>
         <button id="add-policy-btn" class="btn small" style="margin-top:16px;">+ Add New</button>
@@ -318,14 +323,21 @@ h1 {
     }
 
     async function renderPolicyItems() {
-        const container = document.getElementById('policy-items');
+        const haircareContainer = document.getElementById('haircare-items');
+        const policyContainer = document.getElementById('policy-items');
         const { data, error } = await supabaseClient
             .from('policy_items')
-            .select('id, title, body')
+            .select('id, title, body, category')
             .order('created_at', { ascending: true });
 
-        container.innerHTML = '';
+        haircareContainer.innerHTML = '';
+        policyContainer.innerHTML = '';
         if (error || !data) return;
+
+        function setMode(wrap, mode) {
+            wrap.querySelector('.item-view').style.display = mode === 'view' ? 'block' : 'none';
+            wrap.querySelector('.item-edit-form').style.display = mode === 'edit' ? 'block' : 'none';
+        }
 
         data.forEach(item => {
             const wrap = document.createElement('div');
@@ -346,6 +358,11 @@ h1 {
                     <input type="text" class="item-title">
                     <label>Text</label>
                     <textarea class="item-body"></textarea>
+                    <label>Category</label>
+                    <select class="item-category">
+                        <option value="hair_care">Hair Care</option>
+                        <option value="policy">Policy</option>
+                    </select>
                     <div class="item-actions">
                         <button class="btn small item-save">Save</button>
                         <button class="btn small neutral item-cancel">Cancel</button>
@@ -357,56 +374,36 @@ h1 {
             wrap.querySelector('.item-body-display').textContent = item.body;
             wrap.querySelector('.item-title').value = item.title;
             wrap.querySelector('.item-body').value = item.body;
-            container.appendChild(wrap);
-        });
+            wrap.querySelector('.item-category').value = item.category === 'policy' ? 'policy' : 'hair_care';
 
-        function setMode(wrap, mode) {
-            wrap.querySelector('.item-view').style.display = mode === 'view' ? 'block' : 'none';
-            wrap.querySelector('.item-edit-form').style.display = mode === 'edit' ? 'block' : 'none';
-        }
-
-        container.querySelectorAll('.item-edit').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const wrap = btn.closest('.text-field');
+            wrap.querySelector('.item-edit').addEventListener('click', () => {
                 wrap.querySelector('.item-title').value = wrap.querySelector('.item-title-display').textContent;
                 wrap.querySelector('.item-body').value = wrap.querySelector('.item-body-display').textContent;
                 setMode(wrap, 'edit');
             });
-        });
 
-        container.querySelectorAll('.item-cancel').forEach(btn => {
-            btn.addEventListener('click', () => {
-                setMode(btn.closest('.text-field'), 'view');
-            });
-        });
+            wrap.querySelector('.item-cancel').addEventListener('click', () => setMode(wrap, 'view'));
 
-        container.querySelectorAll('.item-save').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const wrap = btn.closest('.text-field');
+            wrap.querySelector('.item-save').addEventListener('click', async () => {
                 const status = wrap.querySelector('.item-edit-form .item-status');
                 status.classList.remove('error');
                 status.textContent = 'Saving...';
 
                 const title = wrap.querySelector('.item-title').value;
                 const body = wrap.querySelector('.item-body').value;
+                const category = wrap.querySelector('.item-category').value;
 
-                const { error } = await supabaseClient.from('policy_items').update({ title, body }).eq('id', wrap.dataset.id);
+                const { error } = await supabaseClient.from('policy_items').update({ title, body, category }).eq('id', wrap.dataset.id);
 
                 if (error) {
                     status.textContent = 'Failed: ' + error.message;
                     status.classList.add('error');
                 } else {
-                    wrap.querySelector('.item-title-display').textContent = title;
-                    wrap.querySelector('.item-body-display').textContent = body;
-                    status.textContent = '';
-                    setMode(wrap, 'view');
+                    renderPolicyItems();
                 }
             });
-        });
 
-        container.querySelectorAll('.item-delete').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const wrap = btn.closest('.text-field');
+            wrap.querySelector('.item-delete').addEventListener('click', async () => {
                 if (!confirm('Remove this item from the site?')) return;
 
                 const { error } = await supabaseClient.from('policy_items').delete().eq('id', wrap.dataset.id);
@@ -418,11 +415,18 @@ h1 {
                     wrap.remove();
                 }
             });
+
+            (item.category === 'policy' ? policyContainer : haircareContainer).appendChild(wrap);
         });
     }
 
+    document.getElementById('add-haircare-btn').addEventListener('click', async () => {
+        await supabaseClient.from('policy_items').insert({ title: 'New Heading', body: 'New text goes here.', category: 'hair_care' });
+        renderPolicyItems();
+    });
+
     document.getElementById('add-policy-btn').addEventListener('click', async () => {
-        await supabaseClient.from('policy_items').insert({ title: 'New Heading', body: 'New text goes here.' });
+        await supabaseClient.from('policy_items').insert({ title: 'New Heading', body: 'New text goes here.', category: 'policy' });
         renderPolicyItems();
     });
 
