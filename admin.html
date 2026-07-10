@@ -198,6 +198,48 @@ h1 {
     color: #9fe0b0;
 }
 .item-status.error { color: #e58a8a; }
+
+/* ---------- Business hours ---------- */
+.weekly-hours {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.weekly-hours-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #151515;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+.weekly-hours-row .day-label {
+    width: 90px;
+    font-weight: 600;
+}
+.weekly-hours-row label.closed-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .85rem;
+    color: #c9b9ac;
+}
+.weekly-hours-row input[type="time"] {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    background: var(--white);
+    color: #111;
+    font-family: inherit;
+}
+.sub-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    margin-top: 40px;
+    margin-bottom: 6px;
+}
 </style>
 </head>
 <body>
@@ -221,6 +263,17 @@ h1 {
             <button id="logout-btn" class="btn small">Log Out</button>
         </div>
         <div class="slots" id="slots"></div>
+
+        <h2 class="section-heading">Business Hours</h2>
+        <p class="subtitle" style="margin-bottom:20px;">Set your regular weekly hours, then add exceptions for specific dates below. These control which dates and times show up in the custom booking form on the site.</p>
+        <div class="weekly-hours" id="weekly-hours"></div>
+        <button id="save-weekly-hours-btn" class="btn small" style="margin-top:16px;">Save Weekly Hours</button>
+        <p class="item-status" id="weekly-hours-status" style="margin-top:8px;"></p>
+
+        <h3 class="sub-heading">Date Overrides</h3>
+        <p class="subtitle" style="margin-bottom:20px;">Use these for one-off closures or hour changes on specific dates — they take priority over the weekly hours above.</p>
+        <div class="text-fields" id="override-items"></div>
+        <button id="add-override-btn" class="btn small" style="margin-top:16px;">+ Add Date Override</button>
 
         <h2 class="section-heading">Pricing</h2>
         <p class="subtitle" style="margin-bottom:20px;">Add, edit, or remove services and prices as needed.</p>
@@ -547,12 +600,188 @@ h1 {
         renderPricingItems();
     });
 
+    const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    async function renderWeeklyHours() {
+        const container = document.getElementById('weekly-hours');
+        const { data, error } = await supabaseClient
+            .from('weekly_hours')
+            .select('day_of_week, start_time, end_time, is_closed')
+            .order('day_of_week', { ascending: true });
+
+        container.innerHTML = '';
+        if (error || !data) return;
+
+        data.forEach(row => {
+            const rowEl = document.createElement('div');
+            rowEl.className = 'weekly-hours-row';
+            rowEl.dataset.day = row.day_of_week;
+            rowEl.innerHTML = `
+                <span class="day-label">${DAY_NAMES[row.day_of_week]}</span>
+                <label class="closed-toggle">
+                    <input type="checkbox" class="closed-checkbox" ${row.is_closed ? 'checked' : ''}>
+                    Closed
+                </label>
+                <input type="time" class="start-time" value="${row.start_time || ''}" ${row.is_closed ? 'disabled' : ''}>
+                <span>to</span>
+                <input type="time" class="end-time" value="${row.end_time || ''}" ${row.is_closed ? 'disabled' : ''}>
+            `;
+
+            const checkbox = rowEl.querySelector('.closed-checkbox');
+            const startInput = rowEl.querySelector('.start-time');
+            const endInput = rowEl.querySelector('.end-time');
+            checkbox.addEventListener('change', () => {
+                startInput.disabled = checkbox.checked;
+                endInput.disabled = checkbox.checked;
+            });
+
+            container.appendChild(rowEl);
+        });
+    }
+
+    document.getElementById('save-weekly-hours-btn').addEventListener('click', async () => {
+        const status = document.getElementById('weekly-hours-status');
+        status.classList.remove('error');
+        status.textContent = 'Saving...';
+
+        const rows = Array.from(document.querySelectorAll('.weekly-hours-row')).map(rowEl => {
+            const isClosed = rowEl.querySelector('.closed-checkbox').checked;
+            return {
+                day_of_week: Number(rowEl.dataset.day),
+                is_closed: isClosed,
+                start_time: isClosed ? null : rowEl.querySelector('.start-time').value,
+                end_time: isClosed ? null : rowEl.querySelector('.end-time').value,
+            };
+        });
+
+        const { error } = await supabaseClient.from('weekly_hours').upsert(rows, { onConflict: 'day_of_week' });
+
+        if (error) {
+            status.textContent = 'Failed: ' + error.message;
+            status.classList.add('error');
+        } else {
+            status.textContent = 'Saved!';
+            status.classList.remove('error');
+        }
+    });
+
+    async function renderOverrideItems() {
+        const container = document.getElementById('override-items');
+        const { data, error } = await supabaseClient
+            .from('schedule_overrides')
+            .select('id, date, start_time, end_time, is_closed')
+            .order('date', { ascending: true });
+
+        container.innerHTML = '';
+        if (error || !data) return;
+
+        function setMode(wrap, mode) {
+            wrap.querySelector('.item-view').style.display = mode === 'view' ? 'block' : 'none';
+            wrap.querySelector('.item-edit-form').style.display = mode === 'edit' ? 'block' : 'none';
+        }
+
+        data.forEach(item => {
+            const wrap = document.createElement('div');
+            wrap.className = 'text-field';
+            wrap.dataset.id = item.id;
+            wrap.innerHTML = `
+                <div class="item-view">
+                    <h4 class="item-title-display"></h4>
+                    <p class="item-body-display"></p>
+                    <div class="item-actions" style="margin-top:10px;">
+                        <button class="btn small item-edit">Edit</button>
+                        <button class="btn small danger item-delete">Delete</button>
+                        <span class="item-status"></span>
+                    </div>
+                </div>
+                <div class="item-edit-form" style="display:none;">
+                    <label>Date</label>
+                    <input type="date" class="item-date">
+                    <label class="closed-toggle" style="display:flex; align-items:center; gap:6px; margin-bottom:10px;">
+                        <input type="checkbox" class="item-closed"> Closed all day
+                    </label>
+                    <label>Start Time</label>
+                    <input type="time" class="item-start">
+                    <label>End Time</label>
+                    <input type="time" class="item-end">
+                    <div class="item-actions">
+                        <button class="btn small item-save">Save</button>
+                        <button class="btn small neutral item-cancel">Cancel</button>
+                        <span class="item-status"></span>
+                    </div>
+                </div>
+            `;
+
+            wrap.querySelector('.item-title-display').textContent = item.date;
+            wrap.querySelector('.item-body-display').textContent = item.is_closed ? 'Closed' : `${item.start_time}–${item.end_time}`;
+            wrap.querySelector('.item-date').value = item.date;
+            wrap.querySelector('.item-closed').checked = item.is_closed;
+            wrap.querySelector('.item-start').value = item.start_time || '';
+            wrap.querySelector('.item-end').value = item.end_time || '';
+            wrap.querySelector('.item-start').disabled = item.is_closed;
+            wrap.querySelector('.item-end').disabled = item.is_closed;
+
+            wrap.querySelector('.item-closed').addEventListener('change', (e) => {
+                wrap.querySelector('.item-start').disabled = e.target.checked;
+                wrap.querySelector('.item-end').disabled = e.target.checked;
+            });
+
+            wrap.querySelector('.item-edit').addEventListener('click', () => setMode(wrap, 'edit'));
+            wrap.querySelector('.item-cancel').addEventListener('click', () => setMode(wrap, 'view'));
+
+            wrap.querySelector('.item-save').addEventListener('click', async () => {
+                const status = wrap.querySelector('.item-edit-form .item-status');
+                status.classList.remove('error');
+                status.textContent = 'Saving...';
+
+                const date = wrap.querySelector('.item-date').value;
+                const isClosed = wrap.querySelector('.item-closed').checked;
+                const start_time = isClosed ? null : wrap.querySelector('.item-start').value;
+                const end_time = isClosed ? null : wrap.querySelector('.item-end').value;
+
+                const { error } = await supabaseClient
+                    .from('schedule_overrides')
+                    .update({ date, is_closed: isClosed, start_time, end_time })
+                    .eq('id', wrap.dataset.id);
+
+                if (error) {
+                    status.textContent = 'Failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    renderOverrideItems();
+                }
+            });
+
+            wrap.querySelector('.item-delete').addEventListener('click', async () => {
+                if (!confirm('Remove this date override?')) return;
+                const { error } = await supabaseClient.from('schedule_overrides').delete().eq('id', wrap.dataset.id);
+                if (error) {
+                    const status = wrap.querySelector('.item-view .item-status');
+                    status.textContent = 'Failed: ' + error.message;
+                    status.classList.add('error');
+                } else {
+                    wrap.remove();
+                }
+            });
+
+            container.appendChild(wrap);
+        });
+    }
+
+    document.getElementById('add-override-btn').addEventListener('click', async () => {
+        const today = new Date().toISOString().slice(0, 10);
+        await supabaseClient.from('schedule_overrides').insert({ date: today, is_closed: true });
+        renderOverrideItems();
+    });
+
     async function showPanelForSession(session) {
         if (session) {
             document.getElementById('login-panel').style.display = 'none';
             document.getElementById('upload-panel').style.display = 'block';
             document.getElementById('whoami').textContent = 'Logged in as ' + session.user.email;
             renderSlots();
+            renderWeeklyHours();
+            renderOverrideItems();
             renderPolicyItems();
             renderPricingItems();
         } else {
