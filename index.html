@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BraidsByNauja™ | Luxury Braiding Experience</title>
+    <title>BraidsByNauja™ | Luxury Braid Stylist — Book Online</title>
+    <meta name="description" content="Luxury knotless, boho, Fulani, and stitch braid installs by BraidsByNauja. Premium extensions, protective styles, and long-lasting wear. Book your appointment online today.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Italianno&display=swap" rel="stylesheet">
@@ -210,33 +211,37 @@ h1, h2, h3 {
     background: rgba(214, 179, 123, .1);
 }
 
-/* ---------- Booking embed ---------- */
+/* ---------- Booking button ---------- */
 
-.booking-embed {
-    max-width: 900px;
-    margin: 0 auto;
-    border-radius: 28px;
-    overflow: hidden;
-    border: 1px solid rgba(214, 179, 123, .35);
-    background: var(--white);
-}
-
-.booking-embed iframe {
-    width: 100%;
-    height: 720px;
-    border: none;
-    display: block;
-}
-
-.booking-fallback {
+.booking-cta {
     text-align: center;
-    margin-top: 18px;
+}
+
+.booking-cta .btn {
+    font-size: 1.1rem;
+    padding: 20px 48px;
+}
+
+.pre-booking-note {
+    margin-top: 20px;
     color: #d8d0cb;
     font-size: .9rem;
 }
 
-.booking-fallback a {
+.pre-booking-note a {
     color: var(--gold);
+}
+
+/* Google's real scheduling-button element is loaded here, invisibly — our
+   visible .booking-cta button forwards its click to this one so the popup
+   keeps Google's UI while every pixel visitors see is ours. */
+.google-booking-button-host {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* ---------- Section titles ---------- */
@@ -294,6 +299,25 @@ h1, h2, h3 {
     margin-top: 10px;
     font-size: .95rem;
     font-weight: 700;
+}
+
+.testimonial-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.stars {
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+.testimonial-name {
+    color: #c9b9ac;
+    font-size: .85rem;
+    font-style: italic;
 }
 
 /* ---------- Before / after ---------- */
@@ -386,6 +410,55 @@ h1, h2, h3 {
     font-size: .88rem;
     margin-top: 10px;
     white-space: pre-line;
+}
+
+.pricing-note {
+    text-align: center;
+    margin-top: 28px;
+    color: #d8d0cb;
+    font-size: .9rem;
+}
+
+/* ---------- How it works ---------- */
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+}
+
+.step {
+    background: #161616;
+    padding: 30px;
+    border-radius: 26px;
+    border: 1px solid rgba(214, 179, 123, .35);
+    text-align: center;
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #f5dfb2);
+    color: #111;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+}
+
+.step h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: var(--white);
+}
+
+.step p {
+    color: #c9b9ac;
+    font-size: .9rem;
 }
 
 /* ---------- Policies ---------- */
@@ -499,6 +572,16 @@ footer {
     opacity: 1;
 }
 
+/* ---------- Mobile section nav ---------- */
+
+.mobile-nav {
+    display: none;
+}
+
+.mobile-nav-link.active {
+    color: var(--gold);
+}
+
 /* ---------- Back to top ---------- */
 
 .back-to-top {
@@ -548,7 +631,8 @@ footer {
     .gallery,
     .policy-grid,
     .ig-grid,
-    .before-after {
+    .before-after,
+    .steps-grid {
         grid-template-columns: 1fr;
     }
 
@@ -581,8 +665,34 @@ footer {
         display: none;
     }
 
-    .booking-embed iframe {
-        height: 640px;
+    .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 55;
+        background: rgba(11, 11, 11, .92);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(214, 179, 123, .35);
+        padding: 10px 6px calc(10px + env(safe-area-inset-bottom));
+        justify-content: space-between;
+    }
+
+    .mobile-nav-link {
+        flex: 1;
+        text-align: center;
+        color: var(--white);
+        text-decoration: none;
+        font-size: .72rem;
+        font-weight: 600;
+        letter-spacing: .02em;
+        padding: 6px 2px;
+        transition: color .2s ease;
+    }
+
+    body {
+        padding-bottom: 64px;
     }
 
     .card img,
@@ -606,6 +716,15 @@ footer {
         <a href="#policies" class="side-nav-dot" data-label="Policies"><span></span></a>
         <a href="#booking" class="side-nav-dot" data-label="Book Now"><span></span></a>
         <a href="#instagram" class="side-nav-dot" data-label="Instagram"><span></span></a>
+    </nav>
+
+    <!-- ============ MOBILE SECTION NAV ============ -->
+    <nav class="mobile-nav" aria-label="Mobile page section navigation">
+        <a href="#top" class="mobile-nav-link">Home</a>
+        <a href="#pricing" class="mobile-nav-link">Services</a>
+        <a href="#favorites" class="mobile-nav-link">Gallery</a>
+        <a href="#stylist" class="mobile-nav-link">About</a>
+        <a href="#booking" class="mobile-nav-link">Booking</a>
     </nav>
 
     <!-- ============ OPENER ============ -->
@@ -652,27 +771,28 @@ footer {
                     <h3>Knotless Braids</h3>
                     <p class="price">$180+</p>
                     <p class="price-description">Price varies by length and density.</p>
-                    <p class="price-details"></p>
+                    <p class="price-details">Appointment length: about 4 hours</p>
                 </div>
                 <div class="price-card fade-in">
                     <h3>Boho Braids</h3>
                     <p class="price">$200+</p>
                     <p class="price-description">Includes curly ends.</p>
-                    <p class="price-details"></p>
+                    <p class="price-details">Appointment length: about 5 hours</p>
                 </div>
                 <div class="price-card fade-in">
                     <h3>Fulani Braids</h3>
                     <p class="price">$160+</p>
                     <p class="price-description">Classic style, beads available.</p>
-                    <p class="price-details"></p>
+                    <p class="price-details">Appointment length: about 3 hours</p>
                 </div>
                 <div class="price-card fade-in">
                     <h3>Stitch Braids</h3>
                     <p class="price">$120+</p>
                     <p class="price-description">Sleek, long-lasting cornrow style.</p>
-                    <p class="price-details"></p>
+                    <p class="price-details">Appointment length: about 2.5 hours</p>
                 </div>
             </div>
+            <p class="pricing-note fade-in">Prices marked with a "+" are starting rates — your final price depends on length, density, and hair quantity, and is confirmed at your consultation.</p>
         </div>
     </section>
 
@@ -703,6 +823,10 @@ footer {
                     <div class="card-content">
                         <h3>Boho Knotless</h3>
                         <p class="testimonial">"The neatest braids I've ever had. Everyone stopped me to ask who did my hair."</p>
+                        <div class="testimonial-meta">
+                            <span class="stars">★★★★★</span>
+                            <span class="testimonial-name">— Jasmine R.</span>
+                        </div>
                     </div>
                     <!-- Replace images/gallery-boho.svg with a real photo of this style -->
                     <img src="images/gallery-boho.svg" data-storage-path="gallery-boho.jpg" alt="Boho knotless braids">
@@ -711,6 +835,10 @@ footer {
                     <div class="card-content">
                         <h3>Luxury Fulani</h3>
                         <p class="testimonial">"Soft, lightweight, and still looked fresh weeks later."</p>
+                        <div class="testimonial-meta">
+                            <span class="stars">★★★★★</span>
+                            <span class="testimonial-name">— Camille D.</span>
+                        </div>
                     </div>
                     <img src="images/gallery-fulani.svg" data-storage-path="gallery-fulani.jpg" alt="Luxury Fulani braids">
                 </div>
@@ -718,6 +846,10 @@ footer {
                     <div class="card-content">
                         <h3>Silk Press Braids</h3>
                         <p class="testimonial">"Luxury service from start to finish. The quality speaks for itself."</p>
+                        <div class="testimonial-meta">
+                            <span class="stars">★★★★★</span>
+                            <span class="testimonial-name">— Ariana M.</span>
+                        </div>
                     </div>
                     <img src="images/gallery-silkpress.svg" data-storage-path="gallery-silkpress.jpg" alt="Silk press braid style">
                 </div>
@@ -757,7 +889,39 @@ footer {
                 </div>
                 <div class="policy fade-in">
                     <h3>Deposit Policy</h3>
-                    <p>A non-refundable deposit is required to secure all appointments.</p>
+                    <p>A 20% deposit is required at the time of booking to secure your appointment. This deposit is non-refundable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section>
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>How It Works</h2>
+                <p>Booking your braid appointment takes just a few minutes.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step fade-in">
+                    <span class="step-number">1</span>
+                    <h3>Choose a Style</h3>
+                    <p>Browse pricing and pick the braid style that's right for you.</p>
+                </div>
+                <div class="step fade-in">
+                    <span class="step-number">2</span>
+                    <h3>Pick a Time</h3>
+                    <p>Select an open appointment slot that fits your schedule.</p>
+                </div>
+                <div class="step fade-in">
+                    <span class="step-number">3</span>
+                    <h3>Pay Deposit</h3>
+                    <p>Secure your spot with a deposit at booking.</p>
+                </div>
+                <div class="step fade-in">
+                    <span class="step-number">4</span>
+                    <h3>You're Booked</h3>
+                    <p>Show up ready — we'll take care of the rest.</p>
                 </div>
             </div>
         </div>
@@ -770,16 +934,15 @@ footer {
                 <h2>Request Appointment</h2>
                 <p>Pick an open time below — booked instantly, no back-and-forth.</p>
             </div>
-            <div class="booking-embed fade-in">
-                <!-- TODO: replace both instances of this URL with your Google Calendar
-                     Appointment Schedule's booking page link (Calendar -> Create ->
-                     Appointment schedule -> Share -> Copy link) -->
-                <iframe src="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ19IvjQzfc0JmO_bsFX3gY6kYRybOHURFMmjcWQjxTQEm0rFDgNmepBnOSWwFa2Ev2LOz8IMsgy" title="Book an appointment" loading="lazy"></iframe>
+            <div class="booking-cta fade-in">
+                <button id="booking-btn" class="btn primary" type="button">Book Appointment</button>
+                <!-- Google's real scheduling button renders in here, invisibly -->
+                <div id="google-booking-button" class="google-booking-button-host"></div>
+                <p class="pre-booking-note">
+                    Have a question before booking?
+                    <a href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener">Message us on Instagram</a>
+                </p>
             </div>
-            <p class="booking-fallback fade-in">
-                Having trouble with the calendar above?
-                <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ19IvjQzfc0JmO_bsFX3gY6kYRybOHURFMmjcWQjxTQEm0rFDgNmepBnOSWwFa2Ev2LOz8IMsgy" target="_blank" rel="noopener">Open the booking page directly</a>.
-            </p>
         </div>
     </section>
 
@@ -820,12 +983,11 @@ footer {
         });
     </script>
 
-    <!-- ============ SIDE NAV ACTIVE-SECTION TRACKING ============ -->
+    <!-- ============ SIDE NAV + MOBILE NAV ACTIVE-SECTION TRACKING ============ -->
     <script>
-        const navDots = document.querySelectorAll('.side-nav-dot');
-        const navSections = Array.from(navDots)
-            .map(dot => document.querySelector(dot.getAttribute('href')))
-            .filter(Boolean);
+        const navDots = document.querySelectorAll('.side-nav-dot, .mobile-nav-link');
+        const navHrefs = Array.from(new Set(Array.from(navDots).map(dot => dot.getAttribute('href'))));
+        const navSections = navHrefs.map(href => document.querySelector(href)).filter(Boolean);
 
         const navObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -850,6 +1012,47 @@ footer {
         }, { threshold: 0.15 });
 
         document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    </script>
+
+    <!-- ============ BOOKING BUTTON (Google Scheduling Button API) ============ -->
+    <script>
+        (function () {
+            const GOOGLE_BOOKING_URL = 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ19IvjQzfc0JmO_bsFX3gY6kYRybOHURFMmjcWQjxTQEm0rFDgNmepBnOSWwFa2Ev2LOz8IMsgy';
+
+            const visibleBtn = document.getElementById('booking-btn');
+            const host = document.getElementById('google-booking-button');
+            let googleReady = false;
+
+            const stylesheet = document.createElement('link');
+            stylesheet.rel = 'stylesheet';
+            stylesheet.href = 'https://calendar.google.com/calendar/scheduling-button-script.css';
+            document.head.appendChild(stylesheet);
+
+            const script = document.createElement('script');
+            script.src = 'https://calendar.google.com/calendar/scheduling-button-script.js';
+            script.async = true;
+            script.onload = () => {
+                if (window.calendar && window.calendar.schedulingButton) {
+                    window.calendar.schedulingButton.load({
+                        url: GOOGLE_BOOKING_URL,
+                        color: '#d6b37b',
+                        label: 'Book Appointment',
+                        target: host,
+                    });
+                    googleReady = true;
+                }
+            };
+            document.body.appendChild(script);
+
+            visibleBtn.addEventListener('click', () => {
+                const googleBtn = googleReady && host.querySelector('a, button, [role="button"]');
+                if (googleBtn) {
+                    googleBtn.click();
+                } else {
+                    window.open(GOOGLE_BOOKING_URL, '_blank', 'noopener');
+                }
+            });
+        })();
     </script>
 
     <!-- ============ WIFE-MANAGED PHOTOS (Supabase Storage) ============ -->
