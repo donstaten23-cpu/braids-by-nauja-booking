@@ -7,7 +7,7 @@
     <meta name="description" content="Luxury knotless, boho, Fulani, and stitch braid installs by BraidsByNauja. Premium extensions, protective styles, and long-lasting wear. Book your appointment online today.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Italianno&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Italianno&display=swap" rel="stylesheet">
     <link rel="icon" href="images/logo-white.png">
     <style>
 :root {
@@ -32,7 +32,8 @@ html {
 body {
     background: var(--black);
     color: var(--white);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
     line-height: 1.6;
 }
 
@@ -61,7 +62,7 @@ h1, h2, h3 {
 
 .opener {
     position: relative;
-    min-height: 50vh;
+    min-height: 62vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,9 +95,9 @@ h1, h2, h3 {
     z-index: 2;
     font-family: 'Italianno', 'Brush Script MT', cursive;
     font-weight: 400;
-    font-size: 6rem;
+    font-size: 11rem;
     color: var(--white);
-    line-height: 1;
+    line-height: .85;
 }
 
 .opener-subtitle {
@@ -104,9 +105,9 @@ h1, h2, h3 {
     z-index: 2;
     font-family: 'Italianno', 'Brush Script MT', cursive;
     font-weight: 400;
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     color: var(--gold);
-    margin-top: 4px;
+    margin-top: -14px;
 }
 
 /* ---------- Hero ---------- */
@@ -217,11 +218,6 @@ h1, h2, h3 {
     text-align: center;
 }
 
-.booking-cta .btn {
-    font-size: 1.1rem;
-    padding: 20px 48px;
-}
-
 .pre-booking-note {
     margin-top: 20px;
     color: #d8d0cb;
@@ -230,18 +226,6 @@ h1, h2, h3 {
 
 .pre-booking-note a {
     color: var(--gold);
-}
-
-/* Google's real scheduling-button element is loaded here, invisibly — our
-   visible .booking-cta button forwards its click to this one so the popup
-   keeps Google's UI while every pixel visitors see is ours. */
-.google-booking-button-host {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
 }
 
 /* ---------- Section titles ---------- */
@@ -515,71 +499,95 @@ footer {
     color: #c9b9ac;
 }
 
-/* ---------- Side section nav ---------- */
+/* ---------- Hamburger nav ---------- */
 
-.side-nav {
+.nav-toggle {
     position: fixed;
-    left: 22px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 24px;
+    right: 24px;
+    z-index: 70;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(214, 179, 123, .35);
+    background: rgba(11, 11, 11, .75);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    z-index: 60;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
-.side-nav-dot {
-    position: relative;
+.nav-toggle span {
     display: block;
-    width: 10px;
-    height: 10px;
-}
-
-.side-nav-dot span {
-    display: block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 1px solid var(--gold);
-    background: transparent;
-    transition: background .3s ease, transform .3s ease;
-}
-
-.side-nav-dot.active span {
+    width: 20px;
+    height: 2px;
     background: var(--gold);
-    transform: scale(1.2);
+    transition: transform .25s ease, opacity .25s ease;
 }
 
-.side-nav-dot::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 22px;
-    top: 50%;
-    transform: translateY(-50%);
-    white-space: nowrap;
-    font-size: .75rem;
+.nav-toggle.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-panel {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: min(280px, 80vw);
+    height: 100%;
+    background: rgba(11, 11, 11, .97);
+    border-left: 1px solid rgba(214, 179, 123, .35);
+    z-index: 69;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 40px 32px;
+    transition: right .3s ease;
+}
+
+.nav-panel.open {
+    right: 0;
+}
+
+.nav-panel-link {
     color: var(--white);
-    background: rgba(11, 11, 11, .85);
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(214, 179, 123, .35);
+    text-decoration: none;
+    font-size: 1.3rem;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    transition: color .2s ease;
+}
+
+.nav-panel-link.active,
+.nav-panel-link:hover {
+    color: var(--gold);
+}
+
+.nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    z-index: 68;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .2s ease;
+    transition: opacity .3s ease;
 }
 
-.side-nav-dot:hover::before {
+.nav-overlay.open {
     opacity: 1;
-}
-
-/* ---------- Mobile section nav ---------- */
-
-.mobile-nav {
-    display: none;
-}
-
-.mobile-nav-link.active {
-    color: var(--gold);
+    pointer-events: auto;
 }
 
 /* ---------- Back to top ---------- */
@@ -641,15 +649,16 @@ footer {
     }
 
     .opener {
-        min-height: 40vh;
+        min-height: 48vh;
     }
 
     .opener-title {
-        font-size: 3.6rem;
+        font-size: 5.5rem;
     }
 
     .opener-subtitle {
-        font-size: 1.5rem;
+        font-size: 1.7rem;
+        margin-top: -8px;
     }
 
     .logo-wrap {
@@ -659,40 +668,6 @@ footer {
 
     .logo-mark {
         width: 120px;
-    }
-
-    .side-nav {
-        display: none;
-    }
-
-    .mobile-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 55;
-        background: rgba(11, 11, 11, .92);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid rgba(214, 179, 123, .35);
-        padding: 10px 6px calc(10px + env(safe-area-inset-bottom));
-        justify-content: space-between;
-    }
-
-    .mobile-nav-link {
-        flex: 1;
-        text-align: center;
-        color: var(--white);
-        text-decoration: none;
-        font-size: .72rem;
-        font-weight: 600;
-        letter-spacing: .02em;
-        padding: 6px 2px;
-        transition: color .2s ease;
-    }
-
-    body {
-        padding-bottom: 64px;
     }
 
     .card img,
@@ -706,26 +681,22 @@ footer {
 </head>
 <body>
 
-    <!-- ============ SIDE SECTION NAV ============ -->
-    <nav class="side-nav" aria-label="Page section navigation">
-        <a href="#top" class="side-nav-dot" data-label="Home"><span></span></a>
-        <a href="#pricing" class="side-nav-dot" data-label="Pricing"><span></span></a>
-        <a href="#transformations" class="side-nav-dot" data-label="Transformations"><span></span></a>
-        <a href="#favorites" class="side-nav-dot" data-label="Favorites"><span></span></a>
-        <a href="#stylist" class="side-nav-dot" data-label="Stylist"><span></span></a>
-        <a href="#policies" class="side-nav-dot" data-label="Policies"><span></span></a>
-        <a href="#booking" class="side-nav-dot" data-label="Book Now"><span></span></a>
-        <a href="#instagram" class="side-nav-dot" data-label="Instagram"><span></span></a>
+    <!-- ============ HAMBURGER NAV ============ -->
+    <button id="nav-toggle" class="nav-toggle" aria-label="Open navigation menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+    </button>
+    <nav id="nav-panel" class="nav-panel" aria-label="Page section navigation">
+        <a href="#top" class="nav-panel-link">Home</a>
+        <a href="#pricing" class="nav-panel-link">Pricing</a>
+        <a href="#transformations" class="nav-panel-link">Completed Braids</a>
+        <a href="#favorites" class="nav-panel-link">Client Favorites</a>
+        <a href="#stylist" class="nav-panel-link">Meet the Stylist</a>
+        <a href="#haircare" class="nav-panel-link">Hair Care</a>
+        <a href="#policies" class="nav-panel-link">Policies</a>
+        <a href="#booking" class="nav-panel-link">Request Appointment</a>
+        <a href="#instagram" class="nav-panel-link">Instagram</a>
     </nav>
-
-    <!-- ============ MOBILE SECTION NAV ============ -->
-    <nav class="mobile-nav" aria-label="Mobile page section navigation">
-        <a href="#top" class="mobile-nav-link">Home</a>
-        <a href="#pricing" class="mobile-nav-link">Services</a>
-        <a href="#favorites" class="mobile-nav-link">Gallery</a>
-        <a href="#stylist" class="mobile-nav-link">About</a>
-        <a href="#booking" class="mobile-nav-link">Booking</a>
-    </nav>
+    <div id="nav-overlay" class="nav-overlay"></div>
 
     <!-- ============ OPENER ============ -->
     <header class="opener" id="top">
@@ -796,17 +767,17 @@ footer {
         </div>
     </section>
 
-    <!-- ============ LUXURY TRANSFORMATIONS (before / after) ============ -->
+    <!-- ============ COMPLETED BRAIDS ============ -->
     <section id="transformations">
         <div class="container">
             <div class="section-title fade-in">
-                <h2>Luxury Transformations</h2>
-                <p>Flawless installs with premium texture and natural beauty.</p>
+                <h2>Completed Braids</h2>
+                <p>A look at recently finished installs.</p>
             </div>
             <div class="before-after">
                 <!-- Replace images/before-1.svg and before-2.svg with real client photos -->
-                <img class="fade-in" src="images/before-1.svg" data-storage-path="before-1.jpg" alt="Braid transformation, before and after view">
-                <img class="fade-in" src="images/before-2.svg" data-storage-path="before-2.jpg" alt="Braid transformation, styled result">
+                <img class="fade-in" src="images/before-1.svg" data-storage-path="before-1.jpg" alt="Completed braid install">
+                <img class="fade-in" src="images/before-2.svg" data-storage-path="before-2.jpg" alt="Completed braid install">
             </div>
         </div>
     </section>
@@ -870,15 +841,15 @@ footer {
         </div>
     </section>
 
-    <!-- ============ HAIR CARE & POLICIES ============ -->
-    <section id="policies" class="section-alt">
+    <!-- ============ HAIR CARE ============ -->
+    <section id="haircare" class="section-alt">
         <div class="container">
             <div class="section-title fade-in">
-                <h2>Hair Care &amp; Policies</h2>
+                <h2>Hair Care</h2>
                 <p>Please arrive prepared for the best possible install.</p>
             </div>
-            <div class="policy-grid" id="policy-grid">
-                <!-- Populated from the policy_items table — edit/add/remove entries via admin.html -->
+            <div class="policy-grid" id="haircare-grid">
+                <!-- Populated from policy_items where category = 'hair_care' — edit/add/remove via admin.html -->
                 <div class="policy fade-in">
                     <h3>Prep Tips</h3>
                     <p>Please arrive washed, blow-dried, and product-free unless otherwise discussed.</p>
@@ -887,6 +858,19 @@ footer {
                     <h3>Aftercare</h3>
                     <p>Wrap hair nightly with satin and apply lightweight scalp oil to maintain freshness.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ POLICIES ============ -->
+    <section id="policies">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Policies</h2>
+                <p>What to know before you book.</p>
+            </div>
+            <div class="policy-grid" id="policy-grid">
+                <!-- Populated from policy_items where category = 'policy' — edit/add/remove via admin.html -->
                 <div class="policy fade-in">
                     <h3>Deposit Policy</h3>
                     <p>A 20% deposit is required at the time of booking to secure your appointment. This deposit is non-refundable.</p>
@@ -935,9 +919,8 @@ footer {
                 <p>Pick an open time below — booked instantly, no back-and-forth.</p>
             </div>
             <div class="booking-cta fade-in">
-                <button id="booking-btn" class="btn primary" type="button">Book Appointment</button>
-                <!-- Google's real scheduling button renders in here, invisibly -->
-                <div id="google-booking-button" class="google-booking-button-host"></div>
+                <!-- Google's real scheduling button renders here -->
+                <div id="google-booking-button"></div>
                 <p class="pre-booking-note">
                     Have a question before booking?
                     <a href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener">Message us on Instagram</a>
@@ -983,17 +966,42 @@ footer {
         });
     </script>
 
-    <!-- ============ SIDE NAV + MOBILE NAV ACTIVE-SECTION TRACKING ============ -->
+    <!-- ============ HAMBURGER NAV TOGGLE ============ -->
     <script>
-        const navDots = document.querySelectorAll('.side-nav-dot, .mobile-nav-link');
-        const navHrefs = Array.from(new Set(Array.from(navDots).map(dot => dot.getAttribute('href'))));
+        const navToggle = document.getElementById('nav-toggle');
+        const navPanel = document.getElementById('nav-panel');
+        const navOverlay = document.getElementById('nav-overlay');
+
+        function closeNav() {
+            navToggle.classList.remove('open');
+            navPanel.classList.remove('open');
+            navOverlay.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function toggleNav() {
+            const isOpen = navPanel.classList.toggle('open');
+            navToggle.classList.toggle('open', isOpen);
+            navOverlay.classList.toggle('open', isOpen);
+            navToggle.setAttribute('aria-expanded', String(isOpen));
+        }
+
+        navToggle.addEventListener('click', toggleNav);
+        navOverlay.addEventListener('click', closeNav);
+        navPanel.querySelectorAll('.nav-panel-link').forEach(link => link.addEventListener('click', closeNav));
+    </script>
+
+    <!-- ============ NAV ACTIVE-SECTION TRACKING ============ -->
+    <script>
+        const navLinks = document.querySelectorAll('.nav-panel-link');
+        const navHrefs = Array.from(new Set(Array.from(navLinks).map(link => link.getAttribute('href'))));
         const navSections = navHrefs.map(href => document.querySelector(href)).filter(Boolean);
 
         const navObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const id = '#' + entry.target.id;
-                    navDots.forEach(dot => dot.classList.toggle('active', dot.getAttribute('href') === id));
+                    navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === id));
                 }
             });
         }, { rootMargin: '-45% 0px -45% 0px' });
@@ -1015,41 +1023,30 @@ footer {
     </script>
 
     <!-- ============ BOOKING BUTTON (Google Scheduling Button API) ============ -->
+    <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
+    <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
     <script>
         (function () {
             const GOOGLE_BOOKING_URL = 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ19IvjQzfc0JmO_bsFX3gY6kYRybOHURFMmjcWQjxTQEm0rFDgNmepBnOSWwFa2Ev2LOz8IMsgy';
+            const target = document.getElementById('google-booking-button');
 
-            const visibleBtn = document.getElementById('booking-btn');
-            const host = document.getElementById('google-booking-button');
-            let googleReady = false;
-
-            const stylesheet = document.createElement('link');
-            stylesheet.rel = 'stylesheet';
-            stylesheet.href = 'https://calendar.google.com/calendar/scheduling-button-script.css';
-            document.head.appendChild(stylesheet);
-
-            const script = document.createElement('script');
-            script.src = 'https://calendar.google.com/calendar/scheduling-button-script.js';
-            script.async = true;
-            script.onload = () => {
+            window.addEventListener('load', () => {
                 if (window.calendar && window.calendar.schedulingButton) {
                     window.calendar.schedulingButton.load({
                         url: GOOGLE_BOOKING_URL,
                         color: '#d6b37b',
                         label: 'Book Appointment',
-                        target: host,
+                        target,
                     });
-                    googleReady = true;
-                }
-            };
-            document.body.appendChild(script);
-
-            visibleBtn.addEventListener('click', () => {
-                const googleBtn = googleReady && host.querySelector('a, button, [role="button"]');
-                if (googleBtn) {
-                    googleBtn.click();
                 } else {
-                    window.open(GOOGLE_BOOKING_URL, '_blank', 'noopener');
+                    // Google's script failed to load — fall back to a plain styled link
+                    const fallback = document.createElement('a');
+                    fallback.href = GOOGLE_BOOKING_URL;
+                    fallback.target = '_blank';
+                    fallback.rel = 'noopener';
+                    fallback.className = 'btn primary';
+                    fallback.textContent = 'Book Appointment';
+                    target.appendChild(fallback);
                 }
             });
         })();
@@ -1076,24 +1073,29 @@ footer {
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 
-    <!-- ============ WIFE-MANAGED POLICY LIST (Supabase table) ============ -->
+    <!-- ============ WIFE-MANAGED HAIR CARE / POLICY LISTS (Supabase table) ============ -->
     <script>
         (async () => {
             const { data, error } = await supabaseClient
                 .from('policy_items')
-                .select('title, body')
+                .select('title, body, category')
                 .order('created_at', { ascending: true });
 
             if (error || !data || data.length === 0) return;
 
-            const grid = document.getElementById('policy-grid');
-            grid.innerHTML = '';
+            const haircareGrid = document.getElementById('haircare-grid');
+            const policyGrid = document.getElementById('policy-grid');
+            haircareGrid.innerHTML = '';
+            policyGrid.innerHTML = '';
+
             data.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'policy fade-in';
                 card.innerHTML = `<h3></h3><p></p>`;
                 card.querySelector('h3').textContent = item.title;
                 card.querySelector('p').textContent = item.body;
+
+                const grid = item.category === 'policy' ? policyGrid : haircareGrid;
                 grid.appendChild(card);
                 fadeObserver.observe(card);
             });
