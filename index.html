@@ -105,7 +105,7 @@ h1, h2, h3 {
     z-index: 2;
     font-family: 'Italianno', 'Brush Script MT', cursive;
     font-weight: 400;
-    font-size: 2.4rem;
+    font-size: 3rem;
     color: var(--gold);
     margin-top: -14px;
 }
@@ -226,6 +226,106 @@ h1, h2, h3 {
 
 .pre-booking-note a {
     color: var(--gold);
+}
+
+.availability-info {
+    margin-top: 28px;
+}
+
+.availability-info h3 {
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 14px;
+}
+
+.availability-dates {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.availability-date-chip {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(214, 179, 123, .35);
+    background: #161616;
+    color: var(--white);
+    font-size: .85rem;
+}
+
+/* ---------- Custom booking form (experimental, alongside the Google button) ---------- */
+
+.custom-booking {
+    max-width: 550px;
+    margin: 40px auto 0;
+    background: rgba(255, 255, 255, .08);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    padding: 28px;
+    border: 1px solid rgba(214, 179, 123, .35);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
+    text-align: left;
+}
+
+.custom-booking h3 {
+    color: var(--white);
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.custom-booking .field-label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 6px;
+}
+
+.custom-booking input,
+.custom-booking select,
+.custom-booking textarea {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    border: none;
+    background: var(--white);
+    color: #111;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.custom-booking select {
+    border-radius: 999px;
+    padding: 14px 24px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23111'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 14px;
+}
+
+.custom-booking select:disabled {
+    opacity: .6;
+}
+
+.custom-booking textarea {
+    min-height: 90px;
+    resize: none;
+}
+
+.custom-booking-status {
+    text-align: center;
+    margin-top: 10px;
+    color: #d8d0cb;
+    font-size: .9rem;
+}
+
+.custom-booking-status.error {
+    color: #e58a8a;
 }
 
 /* ---------- Section titles ---------- */
@@ -503,8 +603,8 @@ footer {
 
 .nav-toggle {
     position: fixed;
-    top: 24px;
-    right: 24px;
+    top: 100px;
+    left: 24px;
     z-index: 70;
     width: 48px;
     height: 48px;
@@ -543,22 +643,22 @@ footer {
 .nav-panel {
     position: fixed;
     top: 0;
-    right: -320px;
+    left: -320px;
     width: min(280px, 80vw);
     height: 100%;
     background: rgba(11, 11, 11, .97);
-    border-left: 1px solid rgba(214, 179, 123, .35);
+    border-right: 1px solid rgba(214, 179, 123, .35);
     z-index: 69;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 4px;
     padding: 40px 32px;
-    transition: right .3s ease;
+    transition: left .3s ease;
 }
 
 .nav-panel.open {
-    right: 0;
+    left: 0;
 }
 
 .nav-panel-link {
@@ -657,7 +757,7 @@ footer {
     }
 
     .opener-subtitle {
-        font-size: 1.7rem;
+        font-size: 2.1rem;
         margin-top: -8px;
     }
 
@@ -668,6 +768,10 @@ footer {
 
     .logo-mark {
         width: 120px;
+    }
+
+    .nav-toggle {
+        top: 70px;
     }
 
     .card img,
@@ -921,10 +1025,54 @@ footer {
             <div class="booking-cta fade-in">
                 <!-- Google's real scheduling button renders here -->
                 <div id="google-booking-button"></div>
+                <div class="availability-info" id="availability-info" style="display:none;">
+                    <h3>Open Dates — Next 2 Months</h3>
+                    <div class="availability-dates" id="availability-dates"></div>
+                </div>
                 <p class="pre-booking-note">
                     Have a question before booking?
                     <a href="https://www.instagram.com/braidsbynauja/" target="_blank" rel="noopener">Message us on Instagram</a>
                 </p>
+            </div>
+
+            <!-- Experimental custom booking form — runs alongside the Google button above -->
+            <div class="custom-booking fade-in">
+                <h3>Or Book Directly Here</h3>
+                <form id="custom-booking-form">
+                    <label class="field-label" for="cb-braid-type">Braid Type</label>
+                    <select id="cb-braid-type" required>
+                        <option value="" disabled selected>Select Braid Type</option>
+                        <option>Knotless Braids</option>
+                        <option>Boho Braids</option>
+                        <option>Fulani Braids</option>
+                        <option>Stitch Braids</option>
+                    </select>
+
+                    <label class="field-label" for="cb-date">Date</label>
+                    <select id="cb-date" required disabled>
+                        <option value="" disabled selected>Select a braid type first</option>
+                    </select>
+
+                    <label class="field-label" for="cb-time">Start Time</label>
+                    <select id="cb-time" required disabled>
+                        <option value="" disabled selected>Select a date first</option>
+                    </select>
+
+                    <label class="field-label" for="cb-name">Full Name</label>
+                    <input id="cb-name" type="text" placeholder="Full Name" required>
+
+                    <label class="field-label" for="cb-email">Email Address</label>
+                    <input id="cb-email" type="email" placeholder="Email Address" required>
+
+                    <label class="field-label" for="cb-phone">Phone Number</label>
+                    <input id="cb-phone" type="tel" placeholder="Phone Number">
+
+                    <label class="field-label" for="cb-notes">Additional Notes</label>
+                    <textarea id="cb-notes" placeholder="Hair notes, desired length, inspiration, or concerns"></textarea>
+
+                    <button class="btn primary" style="width:100%;" type="submit">Request This Time</button>
+                </form>
+                <p class="custom-booking-status" id="custom-booking-status"></p>
             </div>
         </div>
     </section>
@@ -1071,6 +1219,229 @@ footer {
         const SUPABASE_ANON_KEY = 'sb_publishable_VxNojZOpgSe9R4Rv8nhgmQ_4N4WEPwi';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
+    <!-- ============ CUSTOM BOOKING (hours are wife-managed via admin.html) ============ -->
+    <script>
+        // Schedule now lives in the weekly_hours / schedule_overrides Supabase tables,
+        // editable via admin.html — fetched at runtime below instead of hardcoded here.
+
+        const SERVICE_DURATION_MINUTES = {
+            'Knotless Braids': 240,
+            'Boho Braids': 300,
+            'Fulani Braids': 180,
+            'Stitch Braids': 150,
+        };
+
+        const SLOT_INTERVAL_MINUTES = 30;
+        const LOOKAHEAD_DAYS = 60;
+
+        function pad2(n) { return String(n).padStart(2, '0'); }
+
+        function isoDate(d) {
+            return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+        }
+
+        function windowForDate(dateObj, iso, businessHours, overrides) {
+            if (Object.prototype.hasOwnProperty.call(overrides, iso)) {
+                return overrides[iso];
+            }
+            return businessHours[dateObj.getDay()] || null;
+        }
+
+        async function loadSchedule() {
+            const businessHours = {};
+            const overrides = {};
+
+            const [weeklyResult, overrideResult] = await Promise.all([
+                supabaseClient.from('weekly_hours').select('day_of_week, start_time, end_time, is_closed'),
+                supabaseClient.from('schedule_overrides').select('date, start_time, end_time, is_closed'),
+            ]);
+
+            (weeklyResult.data || []).forEach((row) => {
+                businessHours[row.day_of_week] = row.is_closed ? null : { start: row.start_time, end: row.end_time };
+            });
+
+            (overrideResult.data || []).forEach((row) => {
+                overrides[row.date] = row.is_closed ? null : { start: row.start_time, end: row.end_time };
+            });
+
+            return { businessHours, overrides };
+        }
+
+        function timeToMinutes(t) {
+            const [h, m] = t.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        function minutesToLabel(mins) {
+            const h24 = Math.floor(mins / 60);
+            const m = mins % 60;
+            const period = h24 >= 12 ? 'PM' : 'AM';
+            const h12 = ((h24 + 11) % 12) + 1;
+            return `${h12}:${pad2(m)} ${period}`;
+        }
+
+        (async () => {
+            const braidSelect = document.getElementById('cb-braid-type');
+            const dateSelect = document.getElementById('cb-date');
+            const timeSelect = document.getElementById('cb-time');
+            const form = document.getElementById('custom-booking-form');
+            const status = document.getElementById('custom-booking-status');
+
+            const { businessHours, overrides } = await loadSchedule();
+
+            const candidateDays = [];
+            const today = new Date();
+            for (let i = 1; i <= LOOKAHEAD_DAYS; i++) {
+                const d = new Date(today);
+                d.setDate(d.getDate() + i);
+                const iso = isoDate(d);
+                const win = windowForDate(d, iso, businessHours, overrides);
+                if (win) candidateDays.push({ date: d, iso, window: win });
+            }
+
+            let busyDates = new Set();
+            try {
+                const { data, error } = await supabaseClient.functions.invoke('booking-busy-dates');
+                if (!error && data && Array.isArray(data.busyDates)) {
+                    busyDates = new Set(data.busyDates);
+                }
+            } catch (e) {
+                console.error('Could not load busy dates', e);
+            }
+
+            const openDays = candidateDays.filter((d) => !busyDates.has(d.iso));
+
+            function populateDates() {
+                dateSelect.innerHTML = '';
+                if (openDays.length === 0) {
+                    dateSelect.innerHTML = '<option value="" disabled selected>No open dates right now</option>';
+                    dateSelect.disabled = true;
+                    return;
+                }
+                dateSelect.disabled = false;
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                placeholder.textContent = 'Select a Date';
+                dateSelect.appendChild(placeholder);
+
+                openDays.forEach((d) => {
+                    const opt = document.createElement('option');
+                    opt.value = d.iso;
+                    opt.textContent = d.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    dateSelect.appendChild(opt);
+                });
+            }
+
+            function populateTimes(iso, durationMinutes) {
+                timeSelect.innerHTML = '';
+                const day = openDays.find((d) => d.iso === iso);
+                if (!day) {
+                    timeSelect.innerHTML = '<option value="" disabled selected>Select a date first</option>';
+                    timeSelect.disabled = true;
+                    return;
+                }
+
+                const startMin = timeToMinutes(day.window.start);
+                const endMin = timeToMinutes(day.window.end);
+                const options = [];
+                for (let t = startMin; t + durationMinutes <= endMin; t += SLOT_INTERVAL_MINUTES) {
+                    options.push(t);
+                }
+
+                if (options.length === 0) {
+                    timeSelect.innerHTML = '<option value="" disabled selected>No times long enough that day</option>';
+                    timeSelect.disabled = true;
+                    return;
+                }
+
+                timeSelect.disabled = false;
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                placeholder.textContent = 'Select a Start Time';
+                timeSelect.appendChild(placeholder);
+
+                options.forEach((mins) => {
+                    const opt = document.createElement('option');
+                    opt.value = pad2(Math.floor(mins / 60)) + ':' + pad2(mins % 60);
+                    opt.textContent = minutesToLabel(mins);
+                    timeSelect.appendChild(opt);
+                });
+            }
+
+            braidSelect.addEventListener('change', () => {
+                populateDates();
+                timeSelect.innerHTML = '<option value="" disabled selected>Select a date first</option>';
+                timeSelect.disabled = true;
+            });
+
+            dateSelect.addEventListener('change', () => {
+                const duration = SERVICE_DURATION_MINUTES[braidSelect.value];
+                populateTimes(dateSelect.value, duration);
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalLabel = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                status.textContent = '';
+                status.classList.remove('error');
+
+                const { error } = await supabaseClient.from('bookings').insert([{
+                    braid_type: braidSelect.value,
+                    preferred_date: dateSelect.value,
+                    preferred_time: timeSelect.value,
+                    full_name: document.getElementById('cb-name').value,
+                    email: document.getElementById('cb-email').value,
+                    phone: document.getElementById('cb-phone').value,
+                    notes: document.getElementById('cb-notes').value
+                }]);
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+
+                if (error) {
+                    console.error(error);
+                    status.textContent = 'Something went wrong. Please try again or message us on Instagram.';
+                    status.classList.add('error');
+                } else {
+                    status.textContent = 'Thank you! Your appointment request has been received.';
+                    form.reset();
+                    dateSelect.innerHTML = '<option value="" disabled selected>Select a braid type first</option>';
+                    dateSelect.disabled = true;
+                    timeSelect.innerHTML = '<option value="" disabled selected>Select a date first</option>';
+                    timeSelect.disabled = true;
+                }
+            });
+        })();
+    </script>
+
+    <!-- ============ UPCOMING AVAILABILITY (Google Calendar) ============ -->
+    <script>
+        (async () => {
+            const info = document.getElementById('availability-info');
+            const list = document.getElementById('availability-dates');
+
+            const { data, error } = await supabaseClient.functions.invoke('calendar-availability');
+            if (error || !data || !Array.isArray(data.availableDates) || data.availableDates.length === 0) return;
+
+            data.availableDates.forEach((iso) => {
+                const chip = document.createElement('span');
+                chip.className = 'availability-date-chip';
+                const d = new Date(iso + 'T00:00:00');
+                chip.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                list.appendChild(chip);
+            });
+
+            info.style.display = 'block';
+        })();
     </script>
 
     <!-- ============ WIFE-MANAGED HAIR CARE / POLICY LISTS (Supabase table) ============ -->
