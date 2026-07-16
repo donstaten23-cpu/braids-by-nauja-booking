@@ -316,7 +316,7 @@ h1 {
     ];
 
     function publicUrl(path) {
-        return supabaseClient.storage.from(BUCKET).getPublicUrl(path).data.publicUrl + '?t=' + Date.now();
+        return supabaseClient.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
     }
 
     function renderSlots() {
@@ -358,7 +358,7 @@ h1 {
                 const { error } = await supabaseClient.storage.from(BUCKET).upload(path, file, {
                     upsert: true,
                     contentType: file.type,
-                    cacheControl: '60'
+                    cacheControl: '86400'
                 });
 
                 btn.disabled = false;
@@ -368,7 +368,7 @@ h1 {
                     status.classList.add('error');
                 } else {
                     status.textContent = 'Saved! Live on the site within a minute.';
-                    card.querySelector('img').src = publicUrl(path);
+                    card.querySelector('img').src = publicUrl(path) + '?t=' + Date.now();
                     fileInput.value = '';
                 }
             });
