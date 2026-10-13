@@ -847,6 +847,13 @@ h1 {
         }
     }
 
+    // Supabase reports expired/used reset links as #error_description=... in the URL.
+    const urlParams = new URLSearchParams(window.location.hash.replace(/^#/, '') || window.location.search);
+    const urlError = urlParams.get('error_description');
+    if (urlError) {
+        setLoginMessage(urlError.replace(/\+/g, ' ') + ' Request a new reset link.', false);
+    }
+
     supabaseClient.auth.getSession().then(({ data }) => showPanelForSession(data.session));
     supabaseClient.auth.onAuthStateChange((event, session) => {
         if (event === 'PASSWORD_RECOVERY') recoveryMode = true;
