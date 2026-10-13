@@ -75,6 +75,23 @@ h1 {
     font-size: .9rem;
     min-height: 1.2em;
 }
+#login-error.ok { color: #9fe0b0; }
+.login-hint {
+    color: #c9b9ac;
+    font-size: .9rem;
+    margin-bottom: 14px;
+}
+.link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 14px;
+    color: var(--gold);
+    font-family: inherit;
+    font-size: .9rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
 /* ---------- Upload panel ---------- */
 #upload-panel { display: none; }
 .top-row {
@@ -253,6 +270,21 @@ h1 {
             <input id="login-email" type="email" placeholder="Email" required>
             <input id="login-password" type="password" placeholder="Password" required>
             <button class="btn" type="submit" style="width:100%;">Log In</button>
+            <button type="button" class="link-btn" id="show-forgot-btn">Forgot password?</button>
+        </form>
+
+        <form id="forgot-form" style="display:none;">
+            <p class="login-hint">Enter your email and we'll send you a link to reset your password.</p>
+            <input id="forgot-email" type="email" placeholder="Email" required>
+            <button class="btn" type="submit" style="width:100%;">Send Reset Link</button>
+            <button type="button" class="link-btn" id="back-to-login-btn">Back to log in</button>
+        </form>
+
+        <form id="reset-form" style="display:none;">
+            <p class="login-hint">Choose a new password for your account.</p>
+            <input id="new-password" type="password" placeholder="New password" minlength="8" autocomplete="new-password" required>
+            <input id="confirm-password" type="password" placeholder="Confirm new password" minlength="8" autocomplete="new-password" required>
+            <button class="btn" type="submit" style="width:100%;">Update Password</button>
         </form>
         <p id="login-error"></p>
     </div>
@@ -774,7 +806,32 @@ h1 {
         renderOverrideItems();
     });
 
+    // True while the user arrived via a password-reset email link and still
+    // needs to choose a new password (keeps the admin panel hidden).
+    let recoveryMode = /type=recovery/.test(window.location.hash);
+
+    function showLoginView(view) {
+        document.getElementById('login-form').style.display = view === 'login' ? 'block' : 'none';
+        document.getElementById('forgot-form').style.display = view === 'forgot' ? 'block' : 'none';
+        document.getElementById('reset-form').style.display = view === 'reset' ? 'block' : 'none';
+        const errorEl = document.getElementById('login-error');
+        errorEl.textContent = '';
+        errorEl.classList.remove('ok');
+    }
+
+    function setLoginMessage(text, ok) {
+        const errorEl = document.getElementById('login-error');
+        errorEl.textContent = text;
+        errorEl.classList.toggle('ok', !!ok);
+    }
+
     async function showPanelForSession(session) {
+        if (recoveryMode) {
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('upload-panel').style.display = 'none';
+            showLoginView('reset');
+            return;
+        }
         if (session) {
             document.getElementById('login-panel').style.display = 'none';
             document.getElementById('upload-panel').style.display = 'block';
@@ -791,7 +848,56 @@ h1 {
     }
 
     supabaseClient.auth.getSession().then(({ data }) => showPanelForSession(data.session));
-    supabaseClient.auth.onAuthStateChange((_event, session) => showPanelForSession(session));
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'PASSWORD_RECOVERY') recoveryMode = true;
+        showPanelForSession(session);
+    });
+
+    document.getElementById('show-forgot-btn').addEventListener('click', () => {
+        document.getElementById('forgot-email').value = document.getElementById('login-email').value;
+        showLoginView('forgot');
+    });
+
+    document.getElementById('back-to-login-btn').addEventListener('click', () => showLoginView('login'));
+
+    document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgot-email').value.trim();
+        setLoginMessage('', false);
+
+        const redirectTo = window.location.origin + window.location.pathname;
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+        if (error) {
+            setLoginMessage('Could not send the reset email. Please try again in a moment.', false);
+        } else {
+            setLoginMessage('If that email has an account, a reset link is on its way. Check your inbox.', true);
+        }
+    });
+
+    document.getElementById('reset-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        setLoginMessage('', false);
+
+        if (password !== confirmPassword) {
+            setLoginMessage('Passwords do not match.', false);
+            return;
+        }
+
+        const { error } = await supabaseClient.auth.updateUser({ password });
+        if (error) {
+            setLoginMessage('Could not update password: ' + error.message, false);
+            return;
+        }
+
+        recoveryMode = false;
+        history.replaceState(null, '', window.location.pathname);
+        document.getElementById('reset-form').reset();
+        showLoginView('login');
+        const { data } = await supabaseClient.auth.getSession();
+        showPanelForSession(data.session);
+    });
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
